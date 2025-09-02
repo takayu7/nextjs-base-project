@@ -1,20 +1,31 @@
 // File: app/page.tsx
-import { neon } from "@neondatabase/serverless";
+"use client";
+import CommentForm from "@/app/components/CommentForm";
+import Image from "next/image";
 
 export default function Page() {
-  async function create(formData: FormData) {
-    "use server";
-    // Connect to the Neon database
-    const sql = neon(`${process.env.DATABASE_URL}`);
-    const comment = formData.get("comment");
-    // Insert the comment from the form into the Postgres database
-    await sql`INSERT INTO comments (comment) VALUES (${comment})`;
-  }
+  const handleClick = (href: string) => {
+    window.location.href = href;
+  };
 
   return (
-    <form action={create}>
-      <input type="text" placeholder="write a comment" name="comment" />
-      <button type="submit">Submit</button>
-    </form>
+    <div className="flex items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <CommentForm />
+      <div className="flex gap-4 items-center flex-col sm:flex-row">
+        <button
+          className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+          onClick={() => handleClick("/")}
+        >
+          <Image
+            className="dark:invert"
+            src="/vercel.svg"
+            alt="Vercel logomark"
+            width={20}
+            height={20}
+          />
+          TOP
+        </button>
+      </div>
+    </div>
   );
 }
