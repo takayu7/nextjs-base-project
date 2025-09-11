@@ -9,7 +9,7 @@ const config = {
   theme: {
     extend: {
       colors: {
-        maincolor: "#F85F6A",
+        maincolor: "#F06E9C",
         title: "#35424A",
         subtitle: "#989EB1",
       },
