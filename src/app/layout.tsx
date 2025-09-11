@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Header } from "@/app/components/molecules/Header";
+import { Tabbar } from "@/app/components/molecules/Tabbar";
+// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,11 +25,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+  <html lang="ja">
+      <body className="flex justify-center min-h-screen bg-[#fff]">
+        <div className="flex flex-col w-full max-w-[767px] min-h-screen bg-[#F7F6F6] rounded-t-[24px]">
+          {/* ヘッダー */}
+          <div className="">
+            <Header />
+          </div>
+
+          {/* メイン */}
+          <div className="flex flex-1 justify-center px-4 ">
+            {children}
+          </div>
+
+          {/* フッター*/}
+          <div className="sticky bottom-0 z-50">
+            <Tabbar/>
+          </div>
+
+        </div>
       </body>
     </html>
   );
