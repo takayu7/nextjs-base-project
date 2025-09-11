@@ -27,14 +27,14 @@ export default function RootLayout({
   return (
   <html lang="ja">
       <body className="flex justify-center min-h-screen bg-[#fff]">
-        <div className="flex flex-col w-full max-w-[767px] min-h-screen bg-[#F7F6F6] rounded-t-[24px]">
+        <div className="flex flex-col w-full max-w-[470px] min-h-screen bg-[#F7F6F6] rounded-t-[24px]">
           {/* ヘッダー */}
-          <div className="">
+          <div className="top-0 z-50 ">
             <Header />
           </div>
 
           {/* メイン */}
-          <div className="flex flex-1 justify-center px-4 ">
+          <div className="flex flex-1 justify-center px-4">
             {children}
           </div>
 
