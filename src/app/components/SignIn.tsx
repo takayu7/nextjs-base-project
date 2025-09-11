@@ -9,7 +9,7 @@ export const SignIn = () => {
   const router = useRouter();
   return (
     <>
-      <div className="flex justify-center mt-10">
+      <div className="flex justify-center mt-3">
         <h1 className="text-3xl font-bold font-mono text-gray-700">sign in</h1>
       </div>
 
