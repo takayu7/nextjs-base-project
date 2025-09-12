@@ -15,11 +15,11 @@ export const Tabbar = () => {
           <Pencil />
           <p className="text-[11px]">Record</p>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center"  onClick={() => router.push("/history")}>
           <List />
           <p className="text-[11px]">History</p>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center" onClick={() => router.push("/goal")}>
           <Flag />
           <p className="text-[11px]">Goal</p>
         </div>
