@@ -3,7 +3,7 @@ import { HomeTabs } from "@/app/components/home/HomeTabs";
 export const Home = () => {
   return (
     <>
-      <div className="w-[343px]">
+      <div className="w-[350px]">
         <div className="flex justify-center mt-3 flex-col items-center gap-2">
           <h1  className="text-maincolor text-xl font-bold font-mono ">
             2025.09

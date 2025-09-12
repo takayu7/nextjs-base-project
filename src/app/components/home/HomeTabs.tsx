@@ -1,57 +1,37 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Tabs,
-  TabsContent,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import { HomePieChart } from "@/app/components/home/PieChart";
 import { CategoryDetails } from "@/app/components/home/CategoryDetails";
 import { TabsButton } from "@/app/components/molecules/TabsButton";
 
 export const HomeTabs = () => {
+  const chartExpensesData = [
+    { browser: "Housing", visitors: 220, fill: "#FDCDAC" },
+    { browser: "Hobby", visitors: 220, fill: "#E6F5C9" },
+    { browser: "Food", visitors: 187, fill: "#CBD5E8" },
+    { browser: "Social", visitors: 125, fill: "#F4CAE4" },
+    { browser: "Utilities", visitors: 90, fill: "#FFF2AE" },
+    { browser: "Daily goods", visitors: 50, fill: "#F1E2CC" },
+    { browser: "Medical", visitors: 20, fill: "#CCCCCC" },
+  ];
+
+  const chartIncomesData = [
+    { browser: "Salary", visitors: 80000, fill: "#FDACAC" },
+  ];
+
   return (
     <div className="flex max-w-full flex-col gap-6">
-      <Tabs defaultValue="account" className="w-[276px]">
-        <TabsButton/>
+      <Tabs defaultValue="account" className="w-[350px]">
+        <TabsButton />
         {/* 支出 */}
         <TabsContent value="expense">
-          <HomePieChart />
-          <CategoryDetails />
+          <HomePieChart data={chartExpensesData} />
+          <CategoryDetails type="expense" />
         </TabsContent>
         {/* 収入 */}
         <TabsContent value="income">
-          <Card>
-            <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>
-                Change your password here. After saving, you&apos;ll be logged
-                out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="tabs-demo-current">Current password</Label>
-                <Input id="tabs-demo-current" type="password" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="tabs-demo-new">New password</Label>
-                <Input id="tabs-demo-new" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save password</Button>
-            </CardFooter>
-          </Card>
+          <HomePieChart data={chartIncomesData} />
+          <CategoryDetails type="income" />
         </TabsContent>
       </Tabs>
     </div>

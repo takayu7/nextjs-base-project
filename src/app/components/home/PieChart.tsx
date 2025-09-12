@@ -7,17 +7,15 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A simple pie chart";
+type ChartData={
+  browser: string;
+  visitors: number;
+  fill: string;
+}
 
-const chartData = [
-  { browser: "Housing", visitors: 220, fill: "#FDCDAC" },
-  { browser: "Hobby", visitors: 220, fill: "#E6F5C9" },
-  { browser: "Food", visitors: 187, fill: "#CBD5E8" },
-  { browser: "Social", visitors: 125, fill: "#F4CAE4" },
-  { browser: "Utilities", visitors: 90, fill: "#FFF2AE" },
-  { browser: "Daily goods", visitors: 50, fill: "#F1E2CC" },
-  { browser: "Medical", visitors: 20, fill: "#CCCCCC" },
-];
+type HomePieChartProps = {
+  data: ChartData[];
+};
 
 const chartConfig = {
   visitors: {
@@ -45,7 +43,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function HomePieChart() {
+export const HomePieChart: React.FC<HomePieChartProps> = ({ data }) => {
   return (
     <div className="flex flex-col items-center -mt-4">
       <ChartContainer
@@ -57,9 +55,9 @@ export function HomePieChart() {
             cursor={false}
             content={<ChartTooltipContent hideLabel />}
           />
-          <Pie data={chartData} dataKey="visitors" nameKey="browser" />
+          <Pie data={data} dataKey="visitors" nameKey="browser" />
         </PieChart>
       </ChartContainer>
     </div>
   );
-}
+};
