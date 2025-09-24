@@ -1,3 +1,4 @@
+"use client";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import { TabsButton } from "@/app/components/molecules/TabsButton";
@@ -5,12 +6,24 @@ import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { FormField } from "@/app/components/record/FormField";
 
 export const Record = () => {
+  const today = new Date();
+  const formatted = today
+    .toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .split("/")
+    .join(".");
+  console.log(today);
+  console.log(formatted);
+
   return (
     <>
       <div className="w-[350px]">
         <div className="flex justify-center mt-3 flex-col items-center">
           <h1 className="text-maincolor text-xl font-bold font-mono ">
-            2025.9.4
+            {formatted}
           </h1>
           <div className="flex max-w-full flex-col gap-6">
             <Tabs defaultValue="account" className="w-[350px]">
@@ -31,7 +44,6 @@ export const Record = () => {
                   <ButtonGroup label="Save" varient="income" />
                 </div>
               </TabsContent>
-
             </Tabs>
           </div>
         </div>

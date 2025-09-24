@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
-
+import React, { useState } from "react";
 import { BadgeJapaneseYen } from "lucide-react";
+import { categoryTestData } from "@/app/components/home/CategoryDetails";
 
 type FormFieldProps = {
   varient?: "expense" | "income";
@@ -10,6 +10,21 @@ type FormFieldProps = {
 export const FormField: React.FC<FormFieldProps> = ({
   varient = "expense",
 }) => {
+
+  const today = new Date();
+  const formatted = today
+    .toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .split("/")
+    .join("-");
+  console.log(today);
+  console.log(formatted);
+  const [date, setDate] = useState<string>(formatted);
+
+  const newData = categoryTestData.filter((i) => i.type === varient);
   return (
     <>
       <ul className="space-y-10 pt-8">
@@ -23,8 +38,8 @@ export const FormField: React.FC<FormFieldProps> = ({
             type="number"
             className={
               varient === "expense"
-                ? "rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[28px]"
-                : "rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[184px] h-[28px]"
+                ? "rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[30px]"
+                : "rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[184px] h-[30px]"
             }
           />
         </li>
@@ -35,10 +50,16 @@ export const FormField: React.FC<FormFieldProps> = ({
           <select
             className={
               varient === "expense"
-                ? "select rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[28px]"
-                : "select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[184px] h-[28px]"
+                ? "select rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[30px] text-sm"
+                : "select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[184px] h-[30px] text-sm"
             }
-          />
+          >
+            {newData.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.category}
+              </option>
+            ))}
+          </select>
         </li>
 
         {/* 日付 */}
@@ -46,10 +67,11 @@ export const FormField: React.FC<FormFieldProps> = ({
           <label>Date</label>
           <input
             type="date"
+            value={date}
             className={
               varient === "expense"
-                ? "rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[28px]"
-                : "rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[184px] h-[28px]"
+                ? "rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[30px]"
+                : "rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[184px] h-[30px]"
             }
           />
         </li>
