@@ -17,9 +17,9 @@ export const DeleteCategoriesDialog = () => {
         <DialogTitle className="flex items-center justify-center">
           <p>Delete this category?</p>
         </DialogTitle>
-        <button>
-            
-        </button>
+        <div className="flex justify-center">
+          <ButtonGroup label="delete" varient="delete" />
+        </div>
       </DialogContent>
     </>
   );

@@ -28,7 +28,7 @@ export const CategoriesSetting = () => {
                   <CategoriesList varient="expense" />
                   <div className="flex justify-center pt-10">
                    <Dialog>
-                    <AddCategoriesDialog/>
+                    <AddCategoriesDialog varient="expense"/>
                     </Dialog>
                   </div>
                 </TabsContent>
@@ -36,7 +36,9 @@ export const CategoriesSetting = () => {
                 <TabsContent value="income">
                   <CategoriesList varient="income" />
                   <div className="flex justify-center pt-10">
-                    <ButtonGroup label="add category" varient="income"/>
+                   <Dialog>
+                    <AddCategoriesDialog varient="income"/>
+                    </Dialog>
                   </div>
                 </TabsContent>
               </Tabs>
