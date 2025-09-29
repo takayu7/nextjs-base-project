@@ -7,6 +7,7 @@ import {
 import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { InputField } from "@/app/components/molecules/InputField";
 import { FolderHeart, BookHeart } from "lucide-react";
+import { SelectedIcons } from "@/app/components/setting/SelectedIcons";
 
 type AddCategoriesDialogProps = {
   varient?: "expense" | "income";
@@ -41,20 +42,21 @@ export const AddCategoriesDialog: React.FC<AddCategoriesDialogProps> = ({
               label="category name"
             />
           </div>
-          <div className="flex flex-row items-center">
-            <BookHeart style={{ color: "#7A7A7A", width: "18px" }} />
-            <span className="font-semibold text-[#7A7A7A] pl-0.5 pr-1">
-              icon
-            </span>
+          <div className="flex flex-col">
+            <div className="flex flex-row pb-3">
+              <BookHeart style={{ color: "#7A7A7A", width: "18px" }} />
+              <span className="font-semibold text-[#7A7A7A] pl-0.5 pr-1">
+                icon
+              </span>
+            </div>
+            <SelectedIcons />
           </div>
           <div className="flex justify-center">
-            {
-              varient === "expense" ? (
-                <ButtonGroup label="add" varient="expenseCategory" />
-              ) : (
-                <ButtonGroup label="add" varient="incomeCategory" />
-              )
-            }
+            {varient === "expense" ? (
+              <ButtonGroup label="add" varient="expenseCategory" />
+            ) : (
+              <ButtonGroup label="add" varient="incomeCategory" />
+            )}
           </div>
         </div>
       </DialogContent>

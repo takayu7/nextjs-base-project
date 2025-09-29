@@ -19,7 +19,7 @@ export const CategoriesSetting = () => {
               Edit & Add Categories
             </p>
             <div className="flex flex-col gap-6">
-              <Tabs defaultValue="account" className="px-3">
+              <Tabs defaultValue="expense" className="px-3">
                 <div className="px-6">
                 <TabsButton />
                 </div>
