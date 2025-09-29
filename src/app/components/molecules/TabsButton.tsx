@@ -6,7 +6,7 @@ import {
 
 export const TabsButton = () => {
   return (
-    <div className="flex max-w-full flex-col gap-6 pt-5">
+    <div className="flex max-w-full flex-col gap-6 ">
         <TabsList className="flex items-center justify-center">
           <TabsTriggerLeft value="expense" className="text-sm h-[38px]">
             Expenses

@@ -1,5 +1,7 @@
+import { ReactNode } from "react";
+
 type ButtonGroupProps = {
-  label: string;
+  label: ReactNode;
   varient?: "expense" | "income" | "budget" | "delete" | "expenseCategory" | "incomeCategory";
   onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 };

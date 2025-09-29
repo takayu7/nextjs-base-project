@@ -26,7 +26,7 @@ export const Record = () => {
             {formatted}
           </h1>
           <div className="flex max-w-full flex-col gap-6">
-            <Tabs defaultValue="account" className="w-[350px]">
+            <Tabs defaultValue="expense" className="w-[350px]">
               <TabsButton />
 
               {/* 支出 */}
