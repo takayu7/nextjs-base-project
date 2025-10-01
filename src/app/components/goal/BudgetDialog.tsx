@@ -7,12 +7,18 @@ import {
 import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { jpMoneyChange } from "@/app/lib/utils";
 
-export const BudgetDialog = ({yearMonth, budget}: {yearMonth:string ,budget: number}) => {
-  const budgetTestDate = {
-    budget_id: 1,
-    budget: 100000,
-    year_month: "2025-09",
-  };
+export const BudgetDialog = ({
+  yearMonth,
+  budget,
+}: {
+  yearMonth: string;
+  budget: number;
+}) => {
+  // const budgetTestDate = {
+  //   budget_id: 1,
+  //   budget: 100000,
+  //   year_month: "2025-09",
+  // };
   return (
     <>
       <DialogTrigger className="btn rounded-[3px] bg-[#F6A2BF] text-white btn-xl btn-wide shadow-lg text-lg hover:bg-[#F06E9C] w-[165px] h-[47px]">
@@ -30,9 +36,7 @@ export const BudgetDialog = ({yearMonth, budget}: {yearMonth:string ,budget: num
           </p>
           <p className="text-[13px] ">Your available money for this month is</p>
           <div className="flex flex-col items-center justify-center">
-            <span className="text-[#E93578] text-base">
-              {yearMonth}
-            </span>
+            <span className="text-[#E93578] text-base">{yearMonth}</span>
             <span className="text-[#E93578] text-[28px]">
               {jpMoneyChange(budget)}
             </span>

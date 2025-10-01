@@ -20,12 +20,10 @@ export const EditForm = () => {
         <div className="flex items-center justify-center pt-10 flex-row">
           <ButtonGroup
             label={
-              <>
-                <div className="flex justify-center items-center gap-2">
-                  <PencilLine className="w-4 h-4" />
-                  Edit
-                </div>
-              </>
+              <div className="flex justify-center items-center gap-2">
+                <PencilLine className="w-4 h-4" />
+                Edit
+              </div>
             }
             varient="expense"
           />

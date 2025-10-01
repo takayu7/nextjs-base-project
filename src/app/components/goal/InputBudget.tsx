@@ -9,11 +9,11 @@ export const InputBudget = () => {
   const [budget, setBudget] = useState(0);
 
   const yearMonthTestData = [
-    { id: 1, year_month: "2025-09" },
-    { id: 2, year_month: "2025-10" },
-    { id: 3, year_month: "2025-11" },
-    { id: 4, year_month: "2025-12" },
-    { id: 5, year_month: "2026-01" },
+    { id: 1, year_month: "2025.09" },
+    { id: 2, year_month: "2025.10" },
+    { id: 3, year_month: "2025.11" },
+    { id: 4, year_month: "2025.12" },
+    { id: 5, year_month: "2026.01" },
   ];
   return (
     <>
@@ -32,9 +32,7 @@ export const InputBudget = () => {
               className="select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[180px] h-[32px]"
             >
               {yearMonthTestData.map((i) => (
-              
                 <option key={i.id} value={i.id}>
-                
                   {i.year_month}
                 </option>
               ))}

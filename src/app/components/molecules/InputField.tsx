@@ -36,7 +36,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         style={{ color }}
         className={
           varient === "normal"
-            ? "font-semibold "
+            ? "font-semibold text-[#F06E9C]"
             : varient === "category"
             ? "font-semibold text-[#7A7A7A] pl-0.5 pr-1"
             : ""

@@ -1,7 +1,7 @@
 "use client";
 import { categoryTestData } from "@/app/components/home/CategoryDetails";
 import { jpMoneyChange, categoryIcon } from "@/app/lib/utils";
-import { PiggyBank } from "lucide-react";
+import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 
 export const HistoryList = () => {
@@ -123,7 +123,7 @@ export const HistoryList = () => {
               {/* メモ */}
               {i.memo && (
                 <div className="flex flex-row justify-between ">
-                  <PiggyBank className="w-[40px] h-[40px] text-[#F6A2BF]" />
+                  <PiPiggyBankDuotone className="w-[40px] h-[40px] text-[#F6A2BF]" />
                   <li className="relative w-[217px] h-[40px] rounded-lg bg-[#C0C0C0] text-sm px-4 py-1 text-white flex justify-center items-center">
                     {i.memo}
                     <div className="absolute z-10 left-[15px]">
