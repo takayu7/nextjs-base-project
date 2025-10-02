@@ -1,7 +1,6 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Sheet,
@@ -12,19 +11,51 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CircleUserRound, Settings } from "lucide-react";
-import { getComments } from "@/app/api/Comments";
+import { useEffect, useState } from "react";
 
 export const IconSheet = () => {
-  const profileTestData = [
-    {
-      user_id: 1,
-      name: "Donald",
-      password: "d0903",
-      address: "donald@co.jp",
-      birthday: "2002-09-03",
-    },
-    // {user_id: , name: , password: , address: , birthday: ,},
-  ];
+  const router = useRouter();
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userBirthday, setUserBirthday] = useState<string>("");
+
+  //ログイン情報取得
+  const getUserInfo = () => {
+    const currentName = sessionStorage.getItem("name") || "";
+    const currentEmail = sessionStorage.getItem("email") || "";
+    const currentBirthday = sessionStorage.getItem("birthday") || "";
+    setUserName(currentName);
+    setUserEmail(currentEmail);
+    setUserBirthday(currentBirthday);
+  };
+
+  useEffect(() => {
+    getUserInfo();
+
+    // カスタムイベント監視
+    const handler = () => getUserInfo();
+    window.addEventListener("getUserInfo", handler);
+
+    return () => {
+      window.removeEventListener("getUserInfo", handler);
+    };
+  }, []);
+
+  console.log("ログインユーザ:", userName, userEmail, userBirthday);
+
+  //日付YYYY.MM.DD型に
+  const birthday = new Date(userBirthday);
+  const formatted = birthday
+    .toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .split("/")
+    .join(".");
+
+  console.log(birthday);
+  console.log(formatted);
 
   return (
     <Sheet>
@@ -35,24 +66,24 @@ export const IconSheet = () => {
       </SheetTrigger>
       <SheetContent side="left" className="w-1/2">
         <SheetHeader>
-          <SheetTitle>profile</SheetTitle>
+          <SheetTitle>Profile</SheetTitle>
         </SheetHeader>
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="grid gap-3">
             <Label htmlFor="sheet-demo-name">Name</Label>
-            <p>{profileTestData[0].name}</p>
+            <p>{userName}</p>
           </div>
           <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-username">Username</Label>
-            <p>{profileTestData[0].address}</p>
+            <Label htmlFor="sheet-demo-username">Email</Label>
+            <p>{userEmail}</p>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="sheet-demo-birthday">Birthday</Label>
-            <p>{profileTestData[0].birthday}</p>
+            <p>{formatted}</p>
           </div>
         </div>
         <SheetFooter>
-          <Button>
+          <Button onClick={() => router.push("/setting")}>
             <Settings />
             <p>setting</p>
           </Button>
