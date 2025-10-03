@@ -5,3 +5,16 @@ export type User = {
   address: string;
   birthday: string;
 };
+
+export type Type = {
+  id: number;
+  name: string;
+};
+
+export type Category = {
+  id: string;
+  typeId: number;
+  name: string;
+  color: string;
+  icon: string;
+};
