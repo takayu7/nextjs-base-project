@@ -2,7 +2,13 @@ import { ReactNode } from "react";
 
 type ButtonGroupProps = {
   label: ReactNode;
-  varient?: "expense" | "income" | "budget" | "delete" | "expenseCategory" | "incomeCategory";
+  varient?:
+    | "expense"
+    | "income"
+    | "budget"
+    | "delete"
+    | "expenseCategory"
+    | "incomeCategory";
   onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 };
 
@@ -27,7 +33,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
             ? "btn rounded-[3px] bg-[#A8C6FA] text-black hover:bg-[#75A9F9] w-[131px] h-[35px]"
             : varient === "incomeCategory"
             ? "btn rounded-[3px] bg-[#F6A2BF] text-black hover:bg-[#F06E9C] w-[131px] h-[35px]"
-            :""
+            : ""
         }
         onClick={onClick}
       >

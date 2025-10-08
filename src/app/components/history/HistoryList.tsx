@@ -1,121 +1,93 @@
 "use client";
-import { categoryTestData } from "@/app/components/home/CategoryDetails";
+import React, { useEffect, useState } from "react";
 import { jpMoneyChange, categoryIcon } from "@/app/lib/utils";
 import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
+import { Category, TypeIdProps, History } from "@/app/types/type";
+import { useSessionStorage } from "react-use";
+import { EditForm } from "@/app/components/edit/EditForm";
 
-export const HistoryList = () => {
+export const HistoryList: React.FC<TypeIdProps> = ({ typeId }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [records, setRecords] = useState<History[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedHistory, setSelectedHistory] = useState<History | null>(null);
+
   const router = useRouter();
-  const testData = [
-    {
-      id: 1,
-      type: "expense",
-      user_id: 1,
-      expense_category_id: 3,
-      money: 1500,
-      date: "09.03",
-      memo: "",
-    },
-    {
-      id: 2,
-      type: "expense",
-      user_id: 1,
-      expense_category_id: 2,
-      money: 2500,
-      date: "09.04",
-      memo: "Live ticket and goods",
-    },
-    {
-      id: 3,
-      type: "expense",
-      user_id: 1,
-      expense_category_id: 4,
-      money: 5000,
-      date: "09.09",
-      memo: "",
-    },
-    {
-      id: 4,
-      type: "income",
-      user_id: 1,
-      expense_category_id: 8,
-      money: 2000,
-      date: "09.07",
-      memo: "Goods sold",
-    },
-    {
-      id: 5,
-      type: "income",
-      user_id: 1,
-      expense_category_id: 8,
-      money: 5000,
-      date: "09.09",
-      memo: "",
-    },
-  ];
 
-  const allHistory = [...testData].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  ); // 日付降順
+  // ユーザーIDをセッションストレージから取得
 
-  const groupedHistory = allHistory.reduce<Record<string, typeof allHistory>>(
-    (acc, item) => {
-      if (!acc[item.date]) acc[item.date] = [];
-      acc[item.date].push(item);
-      return acc;
-    },
-    {}
-  );
+  const userId = 1;
 
-  console.log(groupedHistory);
+  // DBからデータ取得
+  useEffect(() => {
+    if (!userId) return;
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/histories/${userId}`);
+        const data = await res.json();
+        console.log("データ:", data);
+        setRecords(data);
+      } catch (error) {
+        console.error("失敗:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const getCategoryName = (id: number) =>
-    categoryTestData.find((i) => i.id === id)?.category;
-  const getCategoryColor = (id: number) =>
-    categoryTestData.find((i) => i.id === id)?.color;
+  console.log("userId", userId);
+  console.log(records);
+
+  // const groupedHistory = records.reduce<Record[]>(
+  //   (acc, item) => {
+  //     if (!acc[item.date]) acc[item.date] = [];
+  //     acc[item.date].push(item);
+  //     return acc;
+  //   },
+  //   {}
+  // );
 
   return (
-  <div className="pt-10">
-    <div className="bg-pink-50 border border-pink-200 px-2 py-7 shadow-sm w-[318px] flex flex-col gap-4">
-      {Object.entries(groupedHistory).map(([date, items]) => (
-        <div key={date} className="flex flex-col gap-1.5">
+    <div className="pt-10">
+      <div className="bg-pink-50 border border-pink-200 px-2 py-7 shadow-sm w-[318px] flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
           {/* 日付 */}
-          <h2 className="font-semibold text-gray-900 text-lg px-1">{date}</h2>
+          <h2 className="font-semibold text-gray-900 text-lg px-1"></h2>
 
           {/* 履歴リスト */}
-          {items.map((i) => (
+          {records.map((i) => (
             <ul
               key={i.id}
               className="flex flex-col bg-white px-3 py-3 border border-dashed border-pink-200 rounded-lg hover:bg-gray-100"
-              // onClick={() => router.push(`/edit/${i.type}-${i.id}`)} 
-              onClick={() => router.push("/edit")} 
+              // onClick={() => router.push(`/edit/${i.type}-${i.id}`)}
+              onClick={() => {
+                sessionStorage.setItem("selectedHistory", JSON.stringify(i));
+                router.push("/edit");
+              }}
             >
               <div className="flex justify-between items-center">
                 {/* 金額 */}
                 <li
                   className={`${
-                    i.type === "expense" ? "text-[#1464F6]" : "text-[#E93578]"
+                    i.typeId === 1 ? "text-[#1464F6]" : "text-[#E93578]"
                   } text-[17px]`}
                 >
-                  {i.type === "expense"
+                  {i.typeId === 1
                     ? `ー${jpMoneyChange(i.money)}`
                     : `＋${jpMoneyChange(i.money)}`}
                 </li>
 
-                {/* カテゴリ */}
+                {/* カテゴリ  */}
                 <div className="flex flex-row items-center">
                   <li className="pr-1">
-                    {categoryIcon(
-                      i.expense_category_id,
-                      getCategoryColor(i.expense_category_id),
-                      18
-                    )}
+                    {categoryIcon(Number(i.categoryId), i.categoryColor, 18)}
                   </li>
                   <li
-                    style={{ color: getCategoryColor(i.expense_category_id) }}
+                    style={{ color: i.categoryColor }}
                     className="text-[15px]"
                   >
-                    {getCategoryName(i.expense_category_id)}
+                    {i.categoryName}
                   </li>
                 </div>
               </div>
@@ -135,9 +107,8 @@ export const HistoryList = () => {
             </ul>
           ))}
         </div>
-      ))}
+      </div>
+      {/* <EditForm records={records} /> */}
     </div>
-  </div>
-);
-
+  );
 };
