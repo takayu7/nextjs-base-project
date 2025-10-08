@@ -1,4 +1,5 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { Pie, PieChart } from "recharts";
 import {
   ChartConfig,
@@ -6,15 +7,16 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Category, Type } from "@/app/types/type";
 
-type ChartData={
+type ChartData = {
   browser: string;
   visitors: number;
   fill: string;
-}
+};
 
 type HomePieChartProps = {
-  data: ChartData[];
+  typeId: Type["id"];
 };
 
 const chartConfig = {
@@ -43,7 +45,31 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const HomePieChart: React.FC<HomePieChartProps> = ({ data }) => {
+export const HomePieChart: React.FC<HomePieChartProps> = ({ typeId }) => {
+  const [pieChartData, setPieChartData] = useState<ChartData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const categories = await res.json();
+        console.log("データ:", categories);
+        //typeごとにグループ化
+        const newData = categories.filter((i) => i.typeId === typeId);
+        //グラフ用データに
+        const chart = newData.map((c) => ({
+          browser: c.name,
+          visitors: Math.floor(Math.random() * 500 + 50),
+          fill: c.color,
+        }));
+        setPieChartData(chart);
+      } catch (error) {
+        console.error("失敗:", error);
+      }
+    };
+    fetchData();
+  }, [typeId]);
+
   return (
     <div className="flex flex-col items-center -mt-4">
       <ChartContainer
@@ -55,7 +81,7 @@ export const HomePieChart: React.FC<HomePieChartProps> = ({ data }) => {
             cursor={false}
             content={<ChartTooltipContent hideLabel />}
           />
-          <Pie data={data} dataKey="visitors" nameKey="browser" />
+          <Pie data={pieChartData} dataKey="visitors" nameKey="browser" />
         </PieChart>
       </ChartContainer>
     </div>

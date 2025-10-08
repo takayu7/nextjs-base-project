@@ -37,6 +37,7 @@ export default function SignIn() {
 
       if (found) {
         if (typeof window !== "undefined") {
+          sessionStorage.setItem("userId", found.id);
           sessionStorage.setItem("name", found.name ?? "");
           sessionStorage.setItem("email", found.address ?? "");
           sessionStorage.setItem("birthday", String(found.birthday ?? ""));

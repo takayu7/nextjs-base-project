@@ -25,7 +25,7 @@ export const CategoriesSetting = () => {
                 </div>
                 {/* 支出 */}
                 <TabsContent value="expense">
-                  <CategoriesList varient="expense" />
+                  <CategoriesList typeId={1} />
                   <div className="flex justify-center pt-10">
                    <Dialog>
                     <AddCategoriesDialog varient="expense"/>
@@ -34,7 +34,7 @@ export const CategoriesSetting = () => {
                 </TabsContent>
                 {/* 収入 */}
                 <TabsContent value="income">
-                  <CategoriesList varient="income" />
+                  <CategoriesList typeId={2} />
                   <div className="flex justify-center pt-10">
                    <Dialog>
                     <AddCategoriesDialog varient="income"/>
