@@ -3,18 +3,30 @@ import { useState } from "react";
 import { InputField } from "@/app/components/molecules/InputField";
 import { BudgetDialog } from "@/app/components/goal/BudgetDialog";
 import { Dialog } from "@/components/ui/dialog";
+import { Budget } from "@/app/types/type";
 
 export const InputBudget = () => {
   const [yearMonth, setYearMonth] = useState("");
   const [budget, setBudget] = useState(0);
+  const [budgetData, setBudgetData] = useState<Budget|null>(null);
+  const userId = 1;
 
-  const yearMonthTestData = [
-    { id: 1, year_month: "2025.09" },
-    { id: 2, year_month: "2025.10" },
-    { id: 3, year_month: "2025.11" },
-    { id: 4, year_month: "2025.12" },
-    { id: 5, year_month: "2026.01" },
-  ];
+  // DBからデータ取得
+
+  const handleSave = async () => {
+    // if (!userId) return;
+    // setLoading(true);
+    try {
+      const res = await fetch(`/api/budget/${userId}`);
+      const data = await res.json();
+      console.log("データ:", data);
+      setBudgetData(data[0]);
+      
+    } catch (error) {
+      console.error("失敗:", error);
+    }
+  };
+
   return (
     <>
       <div className="w-[350px]">
@@ -25,18 +37,19 @@ export const InputBudget = () => {
           <div className="pt-25 flex flex-col items-center gap-10">
             <p>How much is your budget for this month?</p>
             {/* 月選択 */}
-            <select
+            <input
+              type="month"
               name="year_month"
               value={yearMonth}
               onChange={(e) => setYearMonth(e.target.value)}
               className="select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[180px] h-[32px]"
-            >
-              {yearMonthTestData.map((i) => (
+            />
+            {/* {yearMonthTestData.map((i) => (
                 <option key={i.id} value={i.id}>
                   {i.year_month}
                 </option>
-              ))}
-            </select>
+              ))} */}
+            {/* </select> */}
             {/* 予算入力 */}
             <InputField
               id="budget"
@@ -44,10 +57,17 @@ export const InputBudget = () => {
               placeholder="budget"
               varient="box"
               value={budget}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setBudget(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setBudget(Number(e.target.value))
+              }
             />
             <Dialog>
-              <BudgetDialog yearMonth={yearMonth} budget={budget} />
+              <BudgetDialog
+                yearMonth={yearMonth}
+                budget={budget}
+                budgetData={budgetData}
+                onSave={handleSave}
+              />
             </Dialog>
           </div>
         </div>

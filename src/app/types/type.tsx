@@ -26,7 +26,7 @@ export type Category = {
 export type History = {
   id: string;
   typeId: number;
-  userId: string;
+  userId: number;
   categoryId: number;
   money: number;
   date: Date;
@@ -39,9 +39,16 @@ export type History = {
 export type Record = {
   id: string;
   typeId: number;
-  userId: string;
+  userId: number;
   categoryId: number;
   money: number;
   date: Date;
   memo: string;
+};
+
+export type Budget = {
+  id: string;
+  userId: number;
+  money: number;
+  yearMonth: string;
 };
