@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FormField } from "@/app/components/record/FormField";
 import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { PencilLine } from "lucide-react";
-import { Category, TypeIdProps, History } from "@/app/types/type";
+import { History } from "@/app/types/type";
 
 export const EditForm = () => {
   const [selectedHistory, setSelectedHistory] = useState<History | null>(null);

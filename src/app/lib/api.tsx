@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless";
-import { User, Type, Record } from "@/app/types/type";
+import { User, Record } from "@/app/types/type";
 
 const sql = neon(process.env.POSTGRES_URL!);
 
@@ -96,23 +96,54 @@ export async function getRecordData(userId: string) {
 }
 
 //支出・収入の登録
-export async function addRecorData(record: Record){
-  try{
-    const data =await sql `
-    INSERT INTO records 
+export async function addRecorData(record: Record) {
+  try {
+    // const randomUserId = Math.floor(Math.random() * 1000) + 1;
+
+    const formattedDate = new Date(record.date).toISOString().split("T")[0];
+
+    const data = await sql`
+    INSERT INTO records (
+    type_id,
+    user_id,
+    category_id,
+    money,
+    date,
+    memo
+    )
     VALUES (
-    ${record.id}, 
-    ${record.typeId}, 
-    ${record.userId}, 
-    ${record.categoryId}, 
-    ${record.money}, 
-    ${record.date}, 
+    ${Number(record.typeId)}, 
+    ${1}, 
+    ${Number(record.categoryId)}, 
+    ${Number(record.money)}, 
+    ${formattedDate}, 
     ${record.memo} 
     )
     RETURNING *;`;
     return data;
-  }catch(error){
+  } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch category data.");
+    throw new Error("Failed to create record data.");
+  }
+}
+
+//予算データの取得
+export async function getBudgetData(userId:string) {
+  try{
+    const data=await sql`
+    SELECT * 
+    FROM budget 
+     WHERE user_id = ${Number(userId)}
+    `;
+    const formatted=data.map((i)=>({
+      id: i.id,
+      userId: i.user_id,
+      money: i.money,
+      yearMonth: i.year_month
+    }));
+    return formatted;
+  }catch(error){
+     console.error("Database Error:", error);
+    throw new Error("Failed to fetch budget data.");
   }
 }

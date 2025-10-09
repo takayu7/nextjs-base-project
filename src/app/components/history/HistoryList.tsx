@@ -3,15 +3,15 @@ import React, { useEffect, useState } from "react";
 import { jpMoneyChange, categoryIcon } from "@/app/lib/utils";
 import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
-import { Category, TypeIdProps, History } from "@/app/types/type";
-import { useSessionStorage } from "react-use";
-import { EditForm } from "@/app/components/edit/EditForm";
+import {  TypeIdProps, History } from "@/app/types/type";
+// import { useSessionStorage } from "react-use";
+// import { EditForm } from "@/app/components/edit/EditForm";
 
-export const HistoryList: React.FC<TypeIdProps> = ({ typeId }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+export const HistoryList: React.FC<TypeIdProps> = () => {
+  // const [categories, setCategories] = useState<Category[]>([]);
   const [records, setRecords] = useState<History[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedHistory, setSelectedHistory] = useState<History | null>(null);
+  // const [selectedHistory, setSelectedHistory] = useState<History | null>(null);
 
   const router = useRouter();
 
@@ -39,15 +39,6 @@ export const HistoryList: React.FC<TypeIdProps> = ({ typeId }) => {
   console.log("userId", userId);
   console.log(records);
 
-  // const groupedHistory = records.reduce<Record[]>(
-  //   (acc, item) => {
-  //     if (!acc[item.date]) acc[item.date] = [];
-  //     acc[item.date].push(item);
-  //     return acc;
-  //   },
-  //   {}
-  // );
-
   return (
     <div className="pt-10">
       <div className="bg-pink-50 border border-pink-200 px-2 py-7 shadow-sm w-[318px] flex flex-col gap-4">
@@ -60,7 +51,6 @@ export const HistoryList: React.FC<TypeIdProps> = ({ typeId }) => {
             <ul
               key={i.id}
               className="flex flex-col bg-white px-3 py-3 border border-dashed border-pink-200 rounded-lg hover:bg-gray-100"
-              // onClick={() => router.push(`/edit/${i.type}-${i.id}`)}
               onClick={() => {
                 sessionStorage.setItem("selectedHistory", JSON.stringify(i));
                 router.push("/edit");
@@ -108,7 +98,6 @@ export const HistoryList: React.FC<TypeIdProps> = ({ typeId }) => {
           ))}
         </div>
       </div>
-      {/* <EditForm records={records} /> */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { jpMoneyChange, categoryIcon } from "@/app/lib/utils";
+import { categoryIcon } from "@/app/lib/utils";
 import { Category, TypeIdProps } from "@/app/types/type";
 
 // export const categoryTestData = [

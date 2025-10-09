@@ -7,7 +7,7 @@ type InputFieldProps = {
   id: string;
   name?: string;
   type?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   color?: string;
