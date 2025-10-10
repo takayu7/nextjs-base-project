@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless";
-import { User, Record } from "@/app/types/type";
+import { User, AppRecord, Budget } from "@/app/types/type";
 
 const sql = neon(process.env.POSTGRES_URL!);
 
@@ -81,14 +81,21 @@ export async function getRecordData(userId: string) {
       userId: i.user_id,
       categoryId: i.category_id,
       money: i.money,
-      date: i.date,
+       date: new Date(i.date).toISOString().split("T")[0].replace(/-/g, "."),
       memo: i.memo,
       categoryName: i.category_name,
       categoryColor: i.category_color,
       categoryIcon: i.category_icon,
     }));
     console.log("getRecordData formatted:", formatted);
-    return formatted;
+
+    //日付ごとにグループ化
+    const groupedByDate = formatted.reduce((acc, item) => {
+      if (!acc[item.date]) acc[item.date] = [];
+      acc[item.date].push(item);
+      return acc;
+    }, {} as Record<string, (typeof formatted)[number][]>);
+    return groupedByDate;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch category data.");
@@ -96,7 +103,7 @@ export async function getRecordData(userId: string) {
 }
 
 //支出・収入の登録
-export async function addRecorData(record: Record) {
+export async function addRecorData(record: AppRecord) {
   try {
     // const randomUserId = Math.floor(Math.random() * 1000) + 1;
 
@@ -128,22 +135,62 @@ export async function addRecorData(record: Record) {
 }
 
 //予算データの取得
-export async function getBudgetData(userId:string) {
-  try{
-    const data=await sql`
+export async function getBudgetData(userId: string) {
+  try {
+    const data = await sql`
     SELECT * 
     FROM budget 
      WHERE user_id = ${Number(userId)}
     `;
-    const formatted=data.map((i)=>({
+    const formatted = data.map((i) => ({
       id: i.id,
       userId: i.user_id,
       money: i.money,
-      yearMonth: i.year_month
+      yearMonth: i.year_month,
     }));
     return formatted;
-  }catch(error){
-     console.error("Database Error:", error);
+  } catch (error) {
+    console.error("Database Error:", error);
     throw new Error("Failed to fetch budget data.");
+  }
+}
+
+//予算データの取得（現在の月の予算データのみ）
+export async function getBudgetDataByMonth(targetDate: string) {
+  try {
+    const data = await sql`
+    SELECT * 
+    FROM budget 
+    WHERE budget.year_month = ${targetDate}
+    `;
+    const formatted = data.map((i) => ({
+      id: i.id,
+      userId: i.user_id,
+      money: i.money,
+      yearMonth: i.year_month,
+    }));
+    return formatted;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch budget data.");
+  }
+}
+
+
+//予算データの登録
+export async function addBudgetDatas(budget: Budget) {
+  try {
+    const data = await sql`
+    INSERT INTO budget (
+    user_id,
+    money,
+    year_month
+    )
+    VALUES (${1}, ${budget.money}, ${budget.yearMonth}) 
+    RETURNING *;`;
+    return data;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw new Error("Failed to create budget data.");
   }
 }

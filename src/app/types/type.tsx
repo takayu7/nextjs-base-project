@@ -36,7 +36,7 @@ export type History = {
   categoryIcon: string;
 };
 
-export type Record = {
+export type AppRecord = {
   id: string;
   typeId: number;
   userId: number;
@@ -47,7 +47,7 @@ export type Record = {
 };
 
 export type Budget = {
-  id: string;
+  id?: string;
   userId: number;
   money: number;
   yearMonth: string;

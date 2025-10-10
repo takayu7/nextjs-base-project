@@ -1,30 +1,21 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import {
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { jpMoneyChange } from "@/app/lib/utils";
-import { Budget } from "@/app/types/type";
 
 export const BudgetDialog = ({
   yearMonth,
-  budget,
-  budgetData,
+  budgetMoney,
   onSave,
 }: {
   yearMonth: string;
-  budget: number;
-  budgetData: Budget;
+  budgetMoney: number;
   onSave: () => void;
 }) => {
-
-  console.log("予算:", budgetData);
-  console.log(budgetData?.yearMonth);
-
   return (
     <>
       <DialogTrigger
@@ -34,7 +25,6 @@ export const BudgetDialog = ({
         Save
       </DialogTrigger>
       <DialogContent className="w-[348px]">
-        
         <DialogHeader>
           <DialogTitle className="flex justify-center items-center">
             <p className="text-maincolor text-xl text-[#E93578]">Budget Set</p>
@@ -46,9 +36,11 @@ export const BudgetDialog = ({
           </p>
           <p className="text-[13px] ">Your available money for this month is</p>
           <div className="flex flex-col items-center justify-center">
-            <span className="text-[#E93578] text-base">{budgetData?.yearMonth}</span>
+            <span className="text-[#E93578] text-base">
+              {yearMonth}
+            </span>
             <span className="text-[#E93578] text-[28px]">
-              {jpMoneyChange(budgetData?.money)}
+              {jpMoneyChange(budgetMoney)}
             </span>
           </div>
           {/* <ButtonGroup label="Change Budget" varient="budget" /> */}
