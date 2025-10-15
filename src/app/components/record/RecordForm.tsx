@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useTransition } from "react";
-import { Record } from "@/app/types/type";
+import { AppRecord } from "@/app/types/type";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { TabsButton } from "@/app/components/molecules/TabsButton";
 import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
@@ -17,7 +17,7 @@ export const RecordForm = () => {
     memo: string;
   } | null>(null);
 
-  const onSave = async (record: Record) => {
+  const onSave = async (record: AppRecord) => {
     console.log("record:", record);
     const res = await fetch("/api/records", {
       method: "POST",
@@ -31,10 +31,11 @@ export const RecordForm = () => {
     console.log("Response text:", data);
   };
 
-  const handleSave = (record: Record) => {
+  const handleSave = (record: AppRecord) => {
     startTransition(() => {
       onSave(record);
     });
+    
   };
 
   // 日付のフォーマット
@@ -47,8 +48,6 @@ export const RecordForm = () => {
     })
     .split("/")
     .join(".");
-
-  console.log(recordData);
 
   return (
     <div className="w-[350px]">
@@ -67,6 +66,7 @@ export const RecordForm = () => {
                 <ButtonGroup
                   label="Save"
                   varient="expense"
+                  
                   onClick={() => {
                     if (!recordData) return;
                     handleSave({
