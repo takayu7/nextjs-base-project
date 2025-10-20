@@ -62,8 +62,6 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   const newData = categories.filter((i) => i.typeId === typeId);
 
-  console.log(selectedCategory);
-
   return (
     <ul className="space-y-10 pt-8">
       {/* 金額 */}

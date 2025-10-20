@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import { AppRecord } from "@/app/types/type";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { TabsButton } from "@/app/components/molecules/TabsButton";
@@ -16,6 +16,15 @@ export const RecordForm = () => {
     date: Date;
     memo: string;
   } | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  // ユーザーIDをセッションストレージから取得
+  useEffect(() => {
+    const id = sessionStorage.getItem("userId");
+    if (id) {
+      setUserId(Number(id));
+    }
+  }, []);
 
   const onSave = async (record: AppRecord) => {
     console.log("record:", record);
@@ -31,11 +40,19 @@ export const RecordForm = () => {
     console.log("Response text:", data);
   };
 
-  const handleSave = (record: AppRecord) => {
+  const handleSave = async () => {
+    if (!recordData || !userId) return;
+    const record: AppRecord = {
+      userId,
+      typeId: recordData.typeId,
+      categoryId: Number(recordData.categoryId),
+      money: recordData.money,
+      date: recordData.date.toISOString().split("T")[0],
+      memo: recordData.memo,
+    };
     startTransition(() => {
       onSave(record);
     });
-    
   };
 
   // 日付のフォーマット
@@ -66,40 +83,19 @@ export const RecordForm = () => {
                 <ButtonGroup
                   label="Save"
                   varient="expense"
-                  
-                  onClick={() => {
-                    if (!recordData) return;
-                    handleSave({
-                      userId: 1,
-                      typeId: recordData.typeId,
-                      categoryId: recordData.categoryId,
-                      money: recordData.money,
-                      date: recordData.date.toISOString().split("T")[0],
-                      memo: recordData.memo,
-                    });
-                  }}
+                  onClick={handleSave}
                 />
               </div>
             </TabsContent>
 
             {/* 収入 */}
             <TabsContent value="income">
-              <FormField typeId={2} onChange={(data) => setRecordData(data)}/>
+              <FormField typeId={2} onChange={(data) => setRecordData(data)} />
               <div className="flex items-center justify-center pt-25">
                 <ButtonGroup
                   label="Save"
                   varient="income"
-                  onClick={() => {
-                    if (!recordData) return;
-                    handleSave({
-                      userId: 1,
-                      typeId: recordData.typeId,
-                      categoryId: Number(recordData.categoryId),
-                      money: recordData.money,
-                      date: recordData.date.toISOString().split("T")[0],
-                      memo: recordData.memo,
-                    });
-                  }}
+                  onClick={handleSave}
                 />
               </div>
             </TabsContent>

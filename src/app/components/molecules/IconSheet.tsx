@@ -30,6 +30,7 @@ export const IconSheet = () => {
   };
 
   useEffect(() => {
+    console.log("sessionStorage:", sessionStorage.getItem("name"))
     getUserInfo();
 
     // カスタムイベント監視

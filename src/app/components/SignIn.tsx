@@ -5,50 +5,61 @@ import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { InputField } from "@/app/components/molecules/InputField";
-import { User } from "@/app/types/type";
+// import { User } from "@/app/types/type";
 
 export default function SignIn() {
-  const [users, setUsers] = useState<User[]>([]);
+  // const [users, setUsers] = useState<User[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/users");
-        const data = await res.json();
-        console.log("データ:", data);
-        setUsers(data);
-      } catch (error) {
-        console.error("失敗:", error);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async (address: string, password: string) => {
+  //     try {
+  //       const res = await fetch("/api/login", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ address, password }),
+  //       });
+  //       const user = await res.json();
+  //     } catch (error) {
+  //       console.error("失敗:", error);
+  //     }
+  //   };
+  //   localStorage.setItem("currentUserId", user.id.toString());
+  //   fetchData();
+  // }, []);
 
   const handleLogin = async () => {
     setLoginError(false);
     setIsLoading(true);
+
     try {
-      const found = users.find((u) => u.address === email && u.password === password);
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: email, password }),
+      });
 
-      if (found) {
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("userId", found.id);
-          sessionStorage.setItem("name", found.name ?? "");
-          sessionStorage.setItem("email", found.address ?? "");
-          sessionStorage.setItem("birthday", String(found.birthday ?? ""));
-
-          window.dispatchEvent(new Event("getUserInfo"));
-        }
-        router.push("/home");
+      if (!res.ok) {
+        setLoginError(true);
         return;
       }
 
-      // 見つからなかった場合
+      const user = await res.json();
+
+      sessionStorage.setItem("userId", user.id);
+      sessionStorage.setItem("name", user.name ?? "");
+      sessionStorage.setItem("email", user.address ?? "");
+      sessionStorage.setItem("birthday", String(user.birthday ?? ""));
+
+      // window.dispatchEvent(new Event("getUserInfo"));
+
+      router.push("/home");
+    } catch (error) {
+      console.error(error);
       setLoginError(true);
     } finally {
       setIsLoading(false);
@@ -97,7 +108,7 @@ export default function SignIn() {
         <button
           type="button"
           className="btn rounded-[3px] bg-[#F6A2BF] text-white btn-xl btn-wide hover:bg-pink-300 w-[182px] h-[40px]"
-          onClick={() => handleLogin()} 
+          onClick={() => handleLogin()}
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "sign in"}
