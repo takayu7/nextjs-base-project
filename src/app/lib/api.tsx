@@ -14,12 +14,28 @@ export async function fetchUserDatas() {
   }
 }
 
+//ログイン処理
+export async function loginUser(address: string, password: string) {
+  try {
+    const data = await sql`
+      SELECT * FROM users
+      WHERE address = ${address} AND password = ${password};
+    `;
+    return data[0];
+  } catch (error) {
+    console.error("Database error:", error);
+    throw new Error("Failed to login user.");
+  }
+}
+
 //ユーザーデータの登録
 export async function addUserDatas(user: User) {
   try {
     const data = await sql`
-    INSERT INTO users 
-    VALUES (${user.id}, ${user.name}, ${user.password}, ${user.address}, ${user.birthday})`;
+    INSERT INTO users (name, password, address, birthday)
+    VALUES (${user.name}, ${user.password}, ${user.address}, ${user.birthday})
+    RETURNING *;
+    `;
     return data;
   } catch (error) {
     console.error("Database error:", error);
@@ -105,8 +121,6 @@ export async function getRecordData(userId: string) {
 //支出・収入の登録
 export async function addRecorData(record: AppRecord) {
   try {
-    // const randomUserId = Math.floor(Math.random() * 1000) + 1;
-
     const formattedDate = new Date(record.date).toISOString().split("T")[0];
 
     const data = await sql`
@@ -120,7 +134,7 @@ export async function addRecorData(record: AppRecord) {
     )
     VALUES (
     ${Number(record.typeId)}, 
-    ${1}, 
+    ${Number(record.userId)}, 
     ${Number(record.categoryId)}, 
     ${Number(record.money)}, 
     ${formattedDate}, 
@@ -156,12 +170,13 @@ export async function getBudgetData(userId: string) {
 }
 
 //予算データの取得（現在の月の予算データのみ）
-export async function getBudgetDataByMonth(targetDate: string) {
+export async function getBudgetDataByMonth(targetDate: string, userId:number) {
   try {
     const data = await sql`
     SELECT * 
     FROM budget 
     WHERE budget.year_month = ${targetDate}
+    AND user_id = ${userId}
     `;
     const formatted = data.map((i) => ({
       id: i.id,
@@ -186,11 +201,35 @@ export async function addBudgetDatas(budget: Budget) {
     money,
     year_month
     )
-    VALUES (${1}, ${budget.money}, ${budget.yearMonth}) 
+    VALUES (
+    ${Number(budget.userId)}, 
+    ${Number(budget.money)}, 
+    ${budget.yearMonth}
+    ) 
     RETURNING *;`;
     return data;
   } catch (error) {
     console.error("Database error:", error);
     throw new Error("Failed to create budget data.");
+  }
+}
+
+//予算データの更新
+export async function updateBudgetDatas(budget:Budget) {
+  try{
+    const data=await sql`
+    UPDATE budget
+    SET
+      money= ${budget.money}
+    WHERE
+      user_id = ${budget.userId}
+      AND
+      year_month = ${budget.yearMonth}
+    RETURNING *;
+    `;
+    return data;
+  }catch(error){
+    console.error("Database Error:", error);
+    throw new Error("Failed to update budget.");
   }
 }

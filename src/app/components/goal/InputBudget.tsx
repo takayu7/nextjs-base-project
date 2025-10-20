@@ -1,9 +1,12 @@
 "use client";
-import { useState, useTransition } from "react";
+import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
+import { useState, useTransition, useEffect } from "react";
 import { InputField } from "@/app/components/molecules/InputField";
 import { BudgetDialog } from "@/app/components/goal/BudgetDialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Budget } from "@/app/types/type";
+import { jpMoneyChange } from "@/app/lib/utils";
+import { Player } from "@lottiefiles/react-lottie-player";
 
 export const InputBudget = () => {
   const [yearMonth, setYearMonth] = useState("");
@@ -13,96 +16,164 @@ export const InputBudget = () => {
     yearMonth: string;
   } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isEditing, setIsEditing] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // const userId = 1;
+  // ユーザーIDをセッションストレージから取得
+  useEffect(() => {
+    const id = sessionStorage.getItem("userId");
+    if (id) {
+      setUserId(Number(id));
+    }
+    console.log(userId);
+  }, [userId]);
 
-  // DBからデータ取得
+  //現在の年月
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const formatted = `${year}-${month}`;
 
-  // const handleSave = async () => {
-  //   try {
-  //     const res = await fetch(`/api/budget/${userId}`);
-  //     const data = await res.json();
-  //     console.log("データ:", data);
-  //     setBudgetData(data[0]);
+  const fetchBudget = async () => {
+    setLoading(true);
+    const res = await fetch(
+      `/api/budgetByMonth/${formatted}?userId=${userId}`,
+      {
+        cache: "no-store",
+      }
+    );
+    const data = await res.json();
+    setBudgetData(data[0] ?? null);
+    setLoading(false);
+  };
 
-  //   } catch (error) {
-  //     console.error("失敗:", error);
-  //   }
-  // };
+  //初回読み込み時にデータ取得
+  useEffect(() => {
+    if (userId !== null) {
+      fetchBudget();
+    }
+  }, [userId]);
 
+  //登録・更新処理
   const onSave = async (budget: Budget) => {
-    console.log("budget:", budget);
+    // 同じ月なら更新、違う月なら新規
+    const method =
+      budgetData && budgetData.yearMonth === budget.yearMonth ? "PUT" : "POST";
+
+    console.log("送信データ:", budget, "method:", method);
+
     const res = await fetch("/api/budgetUser", {
-      method: "POST",
+      method,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(budget),
       cache: "no-store",
     });
+
     const data = await res.json();
-    console.log("Response text:", data);
-    setBudgetData(data);
+    console.log("Response:", data);
+
+    //送信後に最新データを再取得
+    await fetchBudget();
+    setIsEditing(false);
   };
 
   const handleSave = () => {
-    const budgetData = {
-      userId: 1,
-      yearMonth: yearMonth,
+    if (!userId) return;
+    const budgetInfo: Budget = {
+      userId,
+      yearMonth: yearMonth || formatted,
       money: budgetMoney,
     };
     startTransition(() => {
-      onSave(budgetData);
+      onSave(budgetInfo);
     });
   };
 
-  //現在の年月を取得
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const formatted=(`${year}-${month}`);
-
   return (
-    <>
-      <div className="w-[350px]">
-        <div className="flex justify-center pt-5 flex-col items-center">
-          <h1 className="text-maincolor text-2xl font-bold font-mono">
-            Monthly Budget
-          </h1>
-          <div className="pt-25 flex flex-col items-center gap-10">
-            <p>How much is your budget for this month?</p>
-            {/* 月選択 */}
-            <input
-              type="month"
-              name="year_month"
-              value={yearMonth||formatted}
-              onChange={(e) => setYearMonth(e.target.value)}
-              className="select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[180px] h-[32px]"
+    <div className="w-[350px]">
+      <div className="flex justify-center pt-5 flex-col items-center">
+        <h1 className="text-maincolor text-2xl font-bold font-mono">
+          Monthly Budget
+        </h1>
+        {loading ? (
+          <div>
+            <Player
+              autoplay
+              loop
+              src="/Loading.json"
+              style={{
+                height: "100px",
+                width: "100px",
+              }}
             />
-
-            {/* 予算入力 */}
-            <InputField
-              id="budget"
-              type="number"
-              placeholder="budget"
-              varient="box"
-              value={budgetMoney}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setBudgetMoney(Number(e.target.value))
-              }
-            />
-            {/* Saveボタン */}
-            <Dialog>
-              <BudgetDialog
-                yearMonth={yearMonth}
-                budgetMoney={budgetMoney}
-                budgetData={budgetData}
-                onSave={handleSave}
-              />
-            </Dialog>
           </div>
-        </div>
+        ) : (
+          <div className="pt-25 flex flex-col items-center gap-10">
+            {/* 当月の予算が登録済みの時 */}
+            {budgetData && budgetData.yearMonth === formatted && !isEditing ? (
+              <div className="flex justify-center mt-10">
+                <div className="bg-white shadow-lg rounded-2xl p-8 w-[320px] text-center space-y-4 border border-gray-100">
+                  <p className="text-gray-600 text-lg">Your budget for</p>
+                  <p className="text-[#E93578] text-3xl font-bold tracking-wide">
+                    {budgetData.yearMonth}
+                  </p>
+
+                  <p className="text-gray-600 text-lg">is</p>
+                  <p className="text-[#E93578] text-4xl font-extrabold">
+                    {jpMoneyChange(budgetData.money)}
+                  </p>
+
+                  <div className="border-t border-gray-200 my-3" />
+
+                  <ButtonGroup
+                    label="Edit"
+                    varient="budget"
+                    onClick={() => {
+                      setIsEditing(true);
+                      setYearMonth(budgetData.yearMonth);
+                      setBudgetMoney(budgetData.money);
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <>
+                <p>How much is your budget for this month?</p>
+                {/* 月選択 */}
+                <input
+                  type="month"
+                  name="year_month"
+                  value={yearMonth || formatted}
+                  onChange={(e) => setYearMonth(e.target.value)}
+                  className="select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[180px] h-[32px]"
+                />
+                {/* 予算入力 */}
+                <InputField
+                  id="budget"
+                  type="number"
+                  placeholder="budget"
+                  varient="box"
+                  value={budgetMoney}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setBudgetMoney(Number(e.target.value))
+                  }
+                />
+                {/* Saveボタン */}
+                <Dialog>
+                  <BudgetDialog
+                    yearMonth={yearMonth || formatted}
+                    budgetMoney={budgetMoney}
+                    onSave={handleSave}
+                  />
+                </Dialog>
+              </>
+            )}
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };

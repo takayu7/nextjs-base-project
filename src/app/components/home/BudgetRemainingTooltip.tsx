@@ -31,20 +31,30 @@ export const BudgetRemainingTooltip: React.FC<BudgetRemainingTooltipProps> = ({
   budget,
 }) => {
   const [monthlyBudget, setMonthlyBudget] = useState<Budget | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
 
   const used = budget - remaining;
   const isOver = remaining < 0;
-  // const userId = 1;
+
+  // ユーザーIDをセッションストレージから取得
+  useEffect(() => {
+    const id = sessionStorage.getItem("userId");
+    if (id) {
+      setUserId(Number(id));
+    }
+    console.log(userId);
+  }, [userId]);
 
   // DBからデータ取得
   useEffect(() => {
+    if (userId === null) return;
     const fetchBudget = async () => {
-      const res = await fetch(`/api/budgetByMonth/${nowDate}`);
+      const res = await fetch(`/api/budgetByMonth/${nowDate}?userId=${userId}`);
       const data = await res.json();
       setMonthlyBudget(data[0] ?? null);
     };
     fetchBudget();
-  }, []);
+  }, [userId]);
 
   console.log("today:", nowDate);
   console.log("monthlyBudget:", monthlyBudget);
@@ -60,7 +70,7 @@ export const BudgetRemainingTooltip: React.FC<BudgetRemainingTooltipProps> = ({
         </div>
         <div className="flex items-center gap-1">
           <Wallet />
-          <span>budget: {jpMoneyChange(monthlyBudget?.money)}</span>
+          <span>budget: {jpMoneyChange(monthlyBudget?.money ?? 0)}</span>
         </div>
         <div className="flex items-center gap-1">
           <CircleArrowDown />

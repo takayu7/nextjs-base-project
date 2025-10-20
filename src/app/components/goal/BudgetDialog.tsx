@@ -16,6 +16,7 @@ export const BudgetDialog = ({
   budgetMoney: number;
   onSave: () => void;
 }) => {
+
   return (
     <>
       <DialogTrigger
