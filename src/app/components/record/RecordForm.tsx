@@ -1,57 +1,62 @@
 "use client";
 import React, { useState, useTransition, useEffect } from "react";
-import { AppRecord } from "@/app/types/type";
+import { AppRecord, TypeIdProps } from "@/app/types/type";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { TabsButton } from "@/app/components/molecules/TabsButton";
 import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { FormField } from "@/app/components/record/FormField";
-// import { ConeIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
 
-export const RecordForm = () => {
+export const RecordForm: React.FC<TypeIdProps> = () => {
   const [isPending, startTransition] = useTransition();
-  const [recordData, setRecordData] = useState<{
-    typeId: number;
-    money: number;
-    categoryId: number;
-    date: Date;
-    memo: string;
-  } | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
+  const [typeId, setTypeId] = useState<number>(1);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<AppRecord>({
+    defaultValues: {
+      money: 0,
+      categoryId: 0,
+      date: new Date(),
+      memo: "",
+    },
+  });
 
   // ユーザーIDをセッションストレージから取得
   useEffect(() => {
     const id = sessionStorage.getItem("userId");
-    if (id) {
-      setUserId(Number(id));
-    }
+    if (id) setUserId(Number(id));
   }, []);
 
   const onSave = async (record: AppRecord) => {
-    console.log("record:", record);
     const res = await fetch("/api/records", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(record),
       cache: "no-store",
     });
     const data = await res.text();
-    console.log("Response text:", data);
+    console.log("Response:", data);
   };
 
-  const handleSave = async () => {
-    if (!recordData || !userId) return;
+  const onSubmit = (data: AppRecord) => {
+    if (!userId) return;
+
     const record: AppRecord = {
-      userId,
-      typeId: recordData.typeId,
-      categoryId: Number(recordData.categoryId),
-      money: recordData.money,
-      date: recordData.date.toISOString().split("T")[0],
-      memo: recordData.memo,
+      userId: Number(userId),
+      typeId: Number(typeId),
+      categoryId: Number(data.categoryId),
+      money: Number(data.money),
+      date: new Date(data.date),
+      memo: data.memo || "",
     };
+
     startTransition(() => {
       onSave(record);
+      reset();
     });
   };
 
@@ -66,6 +71,8 @@ export const RecordForm = () => {
     .split("/")
     .join(".");
 
+  console.log(typeId);
+
   return (
     <div className="w-[350px]">
       <div className="flex justify-center mt-3 flex-col items-center">
@@ -73,31 +80,39 @@ export const RecordForm = () => {
           {formatted}
         </h1>
         <div className="flex max-w-full flex-col gap-6">
-          <Tabs defaultValue="expense" className="w-[350px]">
+          <Tabs
+            defaultValue="expense"
+            className="w-[350px]"
+            onValueChange={(v) => setTypeId(v === "expense" ? 1 : 2)}
+          >
             <TabsButton />
 
             {/* 支出 */}
             <TabsContent value="expense">
-              <FormField typeId={1} onChange={(data) => setRecordData(data)} />
-              <div className="flex items-center justify-center pt-25">
-                <ButtonGroup
-                  label="Save"
-                  varient="expense"
-                  onClick={handleSave}
-                />
-              </div>
+              <form>
+                <FormField typeId={1} register={register} errors={errors} />
+                <div className="flex items-center justify-center pt-25">
+                  <ButtonGroup
+                    label="Save"
+                    varient="expense"
+                    onClick={handleSubmit(onSubmit)}
+                  />
+                </div>
+              </form>
             </TabsContent>
 
             {/* 収入 */}
             <TabsContent value="income">
-              <FormField typeId={2} onChange={(data) => setRecordData(data)} />
-              <div className="flex items-center justify-center pt-25">
-                <ButtonGroup
-                  label="Save"
-                  varient="income"
-                  onClick={handleSave}
-                />
-              </div>
+              <form>
+                <FormField typeId={2} register={register} errors={errors} />
+                <div className="flex items-center justify-center pt-25">
+                  <ButtonGroup
+                    label="Save"
+                    varient="income"
+                    onClick={handleSubmit(onSubmit)}
+                  />
+                </div>
+              </form>
             </TabsContent>
           </Tabs>
         </div>

@@ -121,7 +121,9 @@ export async function getRecordData(userId: string) {
 //支出・収入の登録
 export async function addRecorData(record: AppRecord) {
   try {
-    const formattedDate = new Date(record.date).toISOString().split("T")[0];
+    // const formattedDate = typeof record.date==="string"
+    //     ? record.date.toISOString().split("T")[0]
+    //     : record.date;
 
     const data = await sql`
     INSERT INTO records (
@@ -137,7 +139,7 @@ export async function addRecorData(record: AppRecord) {
     ${Number(record.userId)}, 
     ${Number(record.categoryId)}, 
     ${Number(record.money)}, 
-    ${formattedDate}, 
+    ${record.date}, 
     ${record.memo} 
     )
     RETURNING *;`;
