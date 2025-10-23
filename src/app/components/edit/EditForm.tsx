@@ -1,49 +1,88 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { FormField } from "@/app/components/record/FormField";
 import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 import { PencilLine } from "lucide-react";
-import { History } from "@/app/types/type";
+import { History, AppRecord } from "@/app/types/type";
+import { useRouter } from "next/navigation";
+// import { Player } from "@lottiefiles/react-lottie-player";
 
 export const EditForm = () => {
   const [selectedHistory, setSelectedHistory] = useState<History | null>(null);
+  // const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<AppRecord>();
+
+  // sessionStorageから履歴データを取得
   useEffect(() => {
-    const data = sessionStorage.getItem("selectedHistory") ?? "";
+    const data = sessionStorage.getItem("selectedHistory");
     if (data) {
-      setSelectedHistory(JSON.parse(data));
+      const parsed = JSON.parse(data);
+      setSelectedHistory(parsed);
+
+      // 初期値をセット
+      setValue("money", parsed.money);
+      setValue("categoryId", parsed.categoryId);
+      setValue("date", parsed.date.split("T")[0]);
+      setValue("memo", parsed.memo);
     }
-  }, []);
-  console.log(selectedHistory);
+  }, [setValue]);
 
-  if (!selectedHistory) {
-    return <div>Loading...</div>;
-  }
+  if (!selectedHistory) return <div>Loading...</div>;
 
-  const date = new Date(selectedHistory.date);
-  const formatted = date
-    .toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-    .split("/")
-    .join(".");
-  console.log("date:", formatted);
+  const formattedDate = new Date(selectedHistory.date).toLocaleDateString(
+    "ja-JP"
+  );
+
+  //更新処理
+  const onSubmit = async (data: AppRecord) => {
+    try {
+      const res = await fetch(`/api/records`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          id: selectedHistory.id,
+          userId: selectedHistory.userId,
+          typeId: selectedHistory.typeId,
+        }),
+      });
+
+      if (!res.ok) throw new Error("更新失敗");
+      router.push("/home");
+    } catch (error) {
+      console.error("更新エラー:", error);
+    }
+  };
 
   return (
-    <>
-      <div className="flex justify-center mt-3 flex-col items-center">
-        <h1 className="text-maincolor text-xl font-bold font-mono ">
-          {formatted}
-        </h1>
+    <div className="flex justify-center mt-3 flex-col items-center">
+      <h1 className="text-maincolor text-xl font-bold font-mono ">
+        {formattedDate}
+      </h1>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FormField
-          typeId={selectedHistory?.typeId ?? 0}
-          money={String(selectedHistory?.money)}
-          categoryId={selectedHistory?.categoryId}
-          date={selectedHistory?.date}
-          memo={selectedHistory?.memo}
+          typeId={selectedHistory.typeId}
+          register={register}
+          errors={errors}
+          defaultValues={{
+            money: selectedHistory.money,
+            categoryId: selectedHistory.categoryId,
+            date: new Date(selectedHistory.date).toISOString().split("T")[0],
+
+            memo: selectedHistory.memo,
+          }}
         />
-        <div className="flex items-center justify-center pt-10 flex-row">
+
+        <div className="flex items-center justify-center pt-25 flex-row">
           <ButtonGroup
             label={
               <div className="flex justify-center items-center gap-2">
@@ -51,10 +90,10 @@ export const EditForm = () => {
                 Edit
               </div>
             }
-            // varient="expense"
+            varient={selectedHistory.typeId === 1 ? "expense" : "income"}
           />
         </div>
-      </div>
-    </>
+      </form>
+    </div>
   );
 };

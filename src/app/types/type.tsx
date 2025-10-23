@@ -37,7 +37,7 @@ export type History = {
 };
 
 export type AppRecord = {
-  id: string;
+  id?: string;
   typeId: number;
   userId: number;
   categoryId: number;

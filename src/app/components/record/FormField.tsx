@@ -1,19 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { BadgeJapaneseYen } from "lucide-react";
-import { Category, Type } from "@/app/types/type";
+import { Category, Type, AppRecord } from "@/app/types/type";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 
 type FormFieldProps = {
   typeId: Type["id"];
-  register: UseFormRegister<any>;
+  register: UseFormRegister<AppRecord>;
   errors: FieldErrors;
+  defaultValues?: {
+    money?: number;
+    categoryId?: number;
+    date?: string;
+    memo?: string;
+  };
 };
 
 export const FormField: React.FC<FormFieldProps> = ({
   typeId,
   register,
   errors,
+  defaultValues,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -32,19 +39,18 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   const filteredCategories = categories.filter((c) => c.typeId === typeId);
 
-  console.log(typeId);
-
   return (
     <ul className="space-y-8 pt-8">
       {/* 金額 */}
       <li className="flex flex-row justify-between border-b-2 border-gray-300 pb-5">
         <label className="flex items-center gap-2 font-semibold">
           <BadgeJapaneseYen width={20} height={20} />
-          Amount
+          Money
         </label>
         <div className="flex flex-col">
           <input
             type="number"
+            defaultValue={defaultValues?.money}
             {...register("money", {
               required: "金額を入力してください",
               min: { value: 1, message: "1円以上を入力してください" },
@@ -68,9 +74,10 @@ export const FormField: React.FC<FormFieldProps> = ({
         <label className="font-semibold">Category</label>
         <div className="flex flex-col">
           <select
+            defaultValue={defaultValues?.categoryId}
             {...register("categoryId", {
               required: "カテゴリを選択してください",
-              validate: (v) => v !== "0" || "カテゴリを選んでください",
+              validate: (v) => v !== 0 || "カテゴリを選んでください",
             })}
             className={
               typeId === 1
@@ -99,6 +106,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         <div className="flex flex-col">
           <input
             type="date"
+            defaultValue={defaultValues?.date}
             {...register("date", { required: "日付を入力してください" })}
             className={
               typeId === 1
@@ -119,6 +127,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         <label className="font-semibold">Memo</label>
         <div className="flex flex-col">
           <textarea
+            defaultValue={defaultValues?.memo ?? ""}
             {...register("memo", {
               maxLength: {
                 value: 50,

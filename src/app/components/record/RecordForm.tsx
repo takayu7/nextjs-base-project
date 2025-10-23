@@ -11,6 +11,7 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
   const [isPending, startTransition] = useTransition();
   const [userId, setUserId] = useState<number | null>(null);
   const [typeId, setTypeId] = useState<number>(1);
+  const [isSaved, setIsSaved] = useState(false);
   const {
     register,
     handleSubmit,
@@ -57,6 +58,8 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
     startTransition(() => {
       onSave(record);
       reset();
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2500);
     });
   };
 
@@ -70,8 +73,6 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
     })
     .split("/")
     .join(".");
-
-  console.log(typeId);
 
   return (
     <div className="w-[350px]">
@@ -92,11 +93,18 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
               <form>
                 <FormField typeId={1} register={register} errors={errors} />
                 <div className="flex items-center justify-center pt-25">
-                  <ButtonGroup
-                    label="Save"
-                    varient="expense"
-                    onClick={handleSubmit(onSubmit)}
-                  />
+                  {!isSaved && (
+                    <ButtonGroup
+                      label="Save"
+                      varient="expense"
+                      onClick={handleSubmit(onSubmit)}
+                    />
+                  )}
+                  {isSaved && (
+                    <p className="text-[#75A9F9] font-extrabold text-2xl">
+                      Saved successfully!
+                    </p>
+                  )}
                 </div>
               </form>
             </TabsContent>
@@ -106,11 +114,18 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
               <form>
                 <FormField typeId={2} register={register} errors={errors} />
                 <div className="flex items-center justify-center pt-25">
-                  <ButtonGroup
-                    label="Save"
-                    varient="income"
-                    onClick={handleSubmit(onSubmit)}
-                  />
+                  {!isSaved && (
+                    <ButtonGroup
+                      label="Save"
+                      varient="income"
+                      onClick={handleSubmit(onSubmit)}
+                    />
+                  )}
+                  {isSaved && (
+                    <p className="text-[#F06E9C] font-extrabold text-2xl">
+                      Saved successfully!
+                    </p>
+                  )}
                 </div>
               </form>
             </TabsContent>
