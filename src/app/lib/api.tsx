@@ -121,10 +121,6 @@ export async function getRecordData(userId: string) {
 //支出・収入の登録
 export async function addRecorData(record: AppRecord) {
   try {
-    // const formattedDate = typeof record.date==="string"
-    //     ? record.date.toISOString().split("T")[0]
-    //     : record.date;
-
     const data = await sql`
     INSERT INTO records (
     type_id,
@@ -147,6 +143,27 @@ export async function addRecorData(record: AppRecord) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to create record data.");
+  }
+}
+
+//支出・収入の更新
+export async function updateRecorData(record: AppRecord) {
+  try{
+    const data=await sql`
+    UPDATE records
+    SET
+      category_id = ${record.categoryId},
+      money = ${record.money},
+      date = ${record.date},
+      memo = ${record.memo}
+    WHERE
+      id = ${record.id}
+    RETURNING *;
+    `;
+    return data;
+  }catch(error){
+    console.error("Database Error:", error);
+    throw new Error("Failed to update record.");
   }
 }
 

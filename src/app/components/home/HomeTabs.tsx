@@ -86,7 +86,7 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
         <h1 className="text-maincolor text-xl font-bold font-mono ">
           {formatted}
         </h1>
-        <h1 className="text-2xl font-bold font-mono text-[#F06E9C]">
+        <h1 className="text-2xl font-bold font-mono text-[#75A9F9]">
           {jpMoneyChange(totalMoney)}
         </h1>
       </div>
