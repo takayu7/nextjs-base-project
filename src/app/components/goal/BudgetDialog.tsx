@@ -6,22 +6,28 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { jpMoneyChange } from "@/app/lib/utils";
+import { ButtonGroup } from "@/app/components/molecules/ButtonGroup";
 
 export const BudgetDialog = ({
   yearMonth,
   budgetMoney,
   onSave,
+  disabled,
 }: {
   yearMonth: string;
   budgetMoney: number;
   onSave: () => void;
+  disabled: boolean;
 }) => {
-
   return (
     <>
       <DialogTrigger
-        onClick={onSave}
-        className="btn rounded-[3px] bg-[#F6A2BF] text-white btn-xl btn-wide shadow-lg text-lg hover:bg-[#F06E9C] w-[165px] h-[47px]"
+        disabled={disabled}
+        className={`btn rounded-[3px] bg-[#F6A2BF] text-white btn-xl btn-wide shadow-lg text-lg hover:bg-[#F06E9C] w-[165px] h-[47px] ${
+          disabled
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-[#F6A2BF] hover:bg-[#F06E9C]"
+        }`}
       >
         Save
       </DialogTrigger>
@@ -37,14 +43,12 @@ export const BudgetDialog = ({
           </p>
           <p className="text-[13px] ">Your available money for this month is</p>
           <div className="flex flex-col items-center justify-center">
-            <span className="text-[#E93578] text-base">
-              {yearMonth}
-            </span>
+            <span className="text-[#E93578] text-base">{yearMonth}</span>
             <span className="text-[#E93578] text-[28px]">
               {jpMoneyChange(budgetMoney)}
             </span>
           </div>
-          {/* <ButtonGroup label="Change Budget" varient="budget" /> */}
+          <ButtonGroup label="save" varient="budget" onClick={onSave} />
         </div>
       </DialogContent>
     </>

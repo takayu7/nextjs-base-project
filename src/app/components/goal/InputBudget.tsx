@@ -7,8 +7,22 @@ import { Dialog } from "@/components/ui/dialog";
 import { Budget } from "@/app/types/type";
 import { jpMoneyChange } from "@/app/lib/utils";
 import { Player } from "@lottiefiles/react-lottie-player";
+import { useForm } from "react-hook-form";
+import { isValid } from "date-fns";
 
 export const InputBudget = () => {
+  //現在の年月
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const formatted = `${year}-${month}`;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Budget>({ mode: "onChange" });
+
   const [yearMonth, setYearMonth] = useState("");
   const [budgetMoney, setBudgetMoney] = useState(0);
   const [budgetData, setBudgetData] = useState<{
@@ -26,14 +40,7 @@ export const InputBudget = () => {
     if (id) {
       setUserId(Number(id));
     }
-    console.log(userId);
   }, [userId]);
-
-  //現在の年月
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const formatted = `${year}-${month}`;
 
   const fetchBudget = async () => {
     setLoading(true);
@@ -80,7 +87,7 @@ export const InputBudget = () => {
     setIsEditing(false);
   };
 
-  const handleSave = () => {
+  const onSubmit = () => {
     if (!userId) return;
     const budgetInfo: Budget = {
       userId,
@@ -156,17 +163,37 @@ export const InputBudget = () => {
                   type="number"
                   placeholder="budget"
                   varient="box"
+                  isError={!!errors.money}
                   value={budgetMoney}
+                  {...register("money", {
+                    required: "予算額は必須です。",
+                    min: {
+                      value: 1,
+                      message: "1円以上を入力してください。",
+                    },
+                    max: {
+                      value: 100000000,
+                      message: "1億円以下で入力してください。",
+                    },
+                    validate: (value) =>
+                      !isNaN(value) || "数値を入力してください。",
+                  })}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setBudgetMoney(Number(e.target.value))
                   }
                 />
+                {errors.money && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.money.message}
+                  </p>
+                )}
                 {/* Saveボタン */}
                 <Dialog>
                   <BudgetDialog
                     yearMonth={yearMonth || formatted}
                     budgetMoney={budgetMoney}
-                    onSave={handleSave}
+                    onSave={handleSubmit(onSubmit)}
+                    disabled={!isValid || budgetMoney <= 0}
                   />
                 </Dialog>
               </>
