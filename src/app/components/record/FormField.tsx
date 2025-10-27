@@ -40,9 +40,9 @@ export const FormField: React.FC<FormFieldProps> = ({
   const filteredCategories = categories.filter((c) => c.typeId === typeId);
 
   return (
-    <ul className="space-y-8 pt-8">
+    <ul className="space-y-8 pt-8 w-full">
       {/* 金額 */}
-      <li className="flex flex-row justify-between border-b-2 border-gray-300 pb-5">
+      <li className="flex flex-row justify-between border-b-2 border-gray-300 pb-5 gap-5">
         <label className="flex items-center gap-2 font-semibold">
           <BadgeJapaneseYen width={20} height={20} />
           Money
@@ -52,8 +52,8 @@ export const FormField: React.FC<FormFieldProps> = ({
             type="number"
             defaultValue={defaultValues?.money}
             {...register("money", {
-              required: "金額を入力してください",
-              min: { value: 1, message: "1円以上を入力してください" },
+              required: "Please enter money.",
+              min: { value: 1, message: "Please enter 1 yen or more." },
             })}
             className={
               typeId === 1
@@ -70,14 +70,15 @@ export const FormField: React.FC<FormFieldProps> = ({
       </li>
 
       {/* カテゴリ */}
-      <li className="flex flex-row items-center justify-between">
+      <li className="flex flex-row items-center justify-between gap-5">
         <label className="font-semibold">Category</label>
         <div className="flex flex-col">
           <select
-            defaultValue={defaultValues?.categoryId}
+            defaultValue={String(defaultValues?.categoryId ?? "0")}
             {...register("categoryId", {
-              required: "カテゴリを選択してください",
-              validate: (v) => v !== 0 || "カテゴリを選んでください",
+              required: "Please select a category.",
+              setValueAs: (v) => Number(v),
+              validate: (v) => Number(v) !== 0 || "Please select a category.", // vはstring
             })}
             className={
               typeId === 1
@@ -87,11 +88,12 @@ export const FormField: React.FC<FormFieldProps> = ({
           >
             <option value="0">please select</option>
             {filteredCategories.map((c) => (
-              <option key={c.id} value={c.id}>
+              <option key={c.id} value={String(c.id)}>
                 {c.name}
               </option>
             ))}
           </select>
+
           {errors.categoryId && (
             <p className="text-red-500 text-sm mt-1">
               {errors.categoryId.message as string}
@@ -107,7 +109,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           <input
             type="date"
             defaultValue={defaultValues?.date}
-            {...register("date", { required: "日付を入力してください" })}
+            {...register("date", { required: "Please enter a date." })}
             className={
               typeId === 1
                 ? "rounded-[3px] border-1 border-[#75A9F9] px-2 py-1 w-[184px] h-[30px]"
@@ -131,7 +133,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             {...register("memo", {
               maxLength: {
                 value: 50,
-                message: "100文字以内で入力してください",
+                message: "Please enter no more than 100 characters.",
               },
             })}
             className={

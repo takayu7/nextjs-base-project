@@ -41,6 +41,7 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
     });
     const data = await res.text();
     console.log("Response:", data);
+     window.dispatchEvent(new Event("recordUpdated"));
   };
 
   const onSubmit = (data: AppRecord) => {

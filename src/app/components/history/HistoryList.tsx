@@ -5,14 +5,10 @@ import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import { TypeIdProps, History } from "@/app/types/type";
 import { Player } from "@lottiefiles/react-lottie-player";
-// import { useSessionStorage } from "react-use";
-// import { EditForm } from "@/app/components/edit/EditForm";
 
 export const HistoryList: React.FC<TypeIdProps> = () => {
-  // const [categories, setCategories] = useState<Category[]>([]);
-  const [records, setRecords] = useState<History[]>([]);
+  const [records, setRecords] = useState<Record<string, History[]>>({});
   const [loading, setLoading] = useState(true);
-  // const [selectedHistory, setSelectedHistory] = useState<History | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
 
