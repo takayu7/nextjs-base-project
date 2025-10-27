@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -14,23 +14,6 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const router = useRouter();
-
-  // useEffect(() => {
-  //   const fetchData = async (address: string, password: string) => {
-  //     try {
-  //       const res = await fetch("/api/login", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ address, password }),
-  //       });
-  //       const user = await res.json();
-  //     } catch (error) {
-  //       console.error("失敗:", error);
-  //     }
-  //   };
-  //   localStorage.setItem("currentUserId", user.id.toString());
-  //   fetchData();
-  // }, []);
 
   const handleLogin = async () => {
     setLoginError(false);
@@ -55,7 +38,7 @@ export default function SignIn() {
       sessionStorage.setItem("email", user.address ?? "");
       sessionStorage.setItem("birthday", String(user.birthday ?? ""));
 
-      // window.dispatchEvent(new Event("getUserInfo"));
+      window.dispatchEvent(new Event("headerUpdate"));
 
       router.push("/home");
     } catch (error) {
@@ -67,17 +50,20 @@ export default function SignIn() {
   };
 
   return (
-    <>
-      <div className="flex justify-center mt-3">
+    <div className="flex justify-center flex-col pt-20">
+      <div className="flex justify-center mt-3 ">
         <h1 className="text-3xl font-bold font-mono text-gray-700">sign in</h1>
       </div>
 
       <div className="flex flex-row justify-end items-end mb-5 px-5">
         <div className="pb-1">
-          <PiPiggyBankDuotone color="pink" className="w-[82px] h-[82px]" />
+          <PiPiggyBankDuotone color="pink" className="w-[70px] h-[75px]" />
         </div>
         <div className="relative  w-[173px] rounded-lg bg-gray-400 p-4 text-white  text-center m-5">
           please enter your Email and Password.
+           <div className="absolute z-10 left-[12px]">
+            <div className="rounded-sm before:absolute before:-top-5 before:-left-5 before:h-4 before:w-4 before:-rotate-45 before:transform before:bg-gray-400" />
+          </div>
         </div>
       </div>
 
@@ -111,11 +97,11 @@ export default function SignIn() {
           onClick={() => handleLogin()}
           disabled={isLoading}
         >
-          {isLoading ? "Signing in..." : "sign in"}
+          {isLoading ? "signi in..." : "sign in"}
         </button>
 
         {loginError && (
-          <p className="text-red-500 mt-3">EmailまたはPasswordが違います</p>
+          <p className="text-red-500 mt-3">Email or password is incorrect.</p>
         )}
       </div>
 
@@ -125,6 +111,6 @@ export default function SignIn() {
           create account
         </Link>
       </div>
-    </>
+    </div>
   );
 }
