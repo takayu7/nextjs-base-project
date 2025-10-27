@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,13 +11,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CircleUserRound, Settings } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const IconSheet = () => {
   const router = useRouter();
   const [userName, setUserName] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
   const [userBirthday, setUserBirthday] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  const pathname = usePathname(); //現在のパスを取得
 
   //ログイン情報取得
   const getUserInfo = () => {
@@ -29,16 +34,24 @@ export const IconSheet = () => {
     setUserBirthday(currentBirthday);
   };
 
-  useEffect(() => {
-    console.log("sessionStorage:", sessionStorage.getItem("name"))
-    getUserInfo();
+  // ユーザーIDをセッションストレージから取得
+  const updateHeaderInfo = useCallback(() => {
+    const storedId = sessionStorage.getItem("userId") || "0";
+    setUserId(Number(storedId));
+  }, []);
 
+  console.log(userId);
+  console.log(isLoading);
+
+  //再ログイン時にuserIdの値を更新する
+  useEffect(() => {
+    updateHeaderInfo();
+    getUserInfo();
     // カスタムイベント監視
     const handler = () => getUserInfo();
-    window.addEventListener("getUserInfo", handler);
-
+    window.addEventListener("headerUpdate", handler);
     return () => {
-      window.removeEventListener("getUserInfo", handler);
+      window.removeEventListener("headerUpdate", handler);
     };
   }, []);
 
@@ -55,11 +68,24 @@ export const IconSheet = () => {
     .split("/")
     .join(".");
 
-  console.log(birthday);
-  console.log(formatted);
+  // ナビゲーション処理
+  const handleNavigation = (href: string) => {
+    if (href !== pathname) {
+      sessionStorage.clear(); 
+      window.dispatchEvent(new Event("headerUpdate"));
+      setIsLoading(true);
+      setIsOpen(false);
+      router.push(href);
+    }
+  };
+
+  // pathnameが変わったらローディングを止める
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="outline">
           <CircleUserRound className="w-[50x] h-[50px]" />
@@ -84,9 +110,9 @@ export const IconSheet = () => {
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={() => router.push("/setting")}>
+          <Button onClick={() => handleNavigation("/")}>
             <Settings />
-            <p>setting</p>
+            <p>Sign out</p>
           </Button>
         </SheetFooter>
       </SheetContent>

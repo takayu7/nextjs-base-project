@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function TooltipProvider({
   delayDuration = 0,
@@ -15,23 +15,45 @@ function TooltipProvider({
       delayDuration={delayDuration}
       {...props}
     />
-  )
+  );
 }
 
 function Tooltip({
+  children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleClickOutside = () => setOpen(false);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
   return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+      <TooltipProvider>
+      <TooltipPrimitive.Root open={open} onOpenChange={setOpen} {...props}>
+        {children}
+      </TooltipPrimitive.Root>
     </TooltipProvider>
-  )
+  );
 }
 
 function TooltipTrigger({
+  onClick,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      asChild
+      onClick={(e) => {
+        e.stopPropagation(); // 外クリックで閉じないように
+        onClick?.(e);
+      }}
+      {...props}
+    />
+  );
 }
 
 function TooltipContent({
@@ -55,7 +77,7 @@ function TooltipContent({
         <TooltipPrimitive.Arrow className="bg-white fill-white z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
-  )
+  );
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

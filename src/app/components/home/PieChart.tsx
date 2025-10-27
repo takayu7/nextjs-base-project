@@ -41,11 +41,20 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const HomePieChart: React.FC<TypeIdProps> = ({ typeId }) => {
+interface HomePieChartProps extends TypeIdProps {
+  selectedMonth: string;
+}
+
+export const HomePieChart: React.FC<HomePieChartProps> = ({
+  typeId,
+  selectedMonth,
+}) => {
   const [pieChartData, setPieChartData] = useState<ChartData[]>([]);
   const [records, setRecords] = useState<History[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+
+  console.log(loading);
 
   // ユーザーIDをセッションストレージから取得
   useEffect(() => {
@@ -69,24 +78,23 @@ export const HomePieChart: React.FC<TypeIdProps> = ({ typeId }) => {
     console.log(records);
     const fetchData = async () => {
       try {
+        //カテゴリデータ取得
         const categoryRes = await fetch("/api/categories");
         const categoryData = await categoryRes.json();
-        console.log("データ:", categoryData);
-
-        const today = new Date();
-        const thisMonth = today.getMonth();
-        const thisYear = today.getFullYear();
 
         // recordsを配列に
         const allRecords = Object.values(records).flat();
 
-        // 当月の履歴を typeId ごとに絞り込み
+        // 選択中の月データに絞る
+        const [selectedYear, selectedMonthNum] = selectedMonth
+          .split("-")
+          .map(Number);
         const monthlyRecords = allRecords.filter((r) => {
           const date = new Date(r.date);
           return (
             r.typeId === typeId &&
-            date.getFullYear() === thisYear &&
-            date.getMonth() === thisMonth
+            date.getFullYear() === selectedYear &&
+            date.getMonth() + 1 === selectedMonthNum
           );
         });
 
@@ -98,27 +106,26 @@ export const HomePieChart: React.FC<TypeIdProps> = ({ typeId }) => {
 
         // typeIdに対応するカテゴリのみ抽出
         const filteredCategories = categoryData.filter(
-          (c) => c.typeId === typeId
+          (c: Category) => c.typeId === typeId
         );
 
         // グラフ用データ作成
         const chart = filteredCategories
-          .map((c) => ({
+          .map((c: Category) => ({
             browser: c.name,
             visitors: categoryTotals[c.id] || 0,
             fill: c.color,
           }))
           // 金額が0のカテゴリは非表示に
-          .filter((c) => c.visitors > 0);
+          .filter((c: ChartData) => c.visitors > 0);
 
         setPieChartData(chart);
-        console.log(chart);
       } catch (error) {
         console.error("失敗:", error);
       }
     };
     fetchData();
-  }, [records, typeId]);
+  }, [records, typeId, selectedMonth]);
 
   return (
     <div className="flex flex-col items-center -mt-4">

@@ -5,26 +5,36 @@ import { HomePieChart } from "@/app/components/home/PieChart";
 import { CategoryDetails } from "@/app/components/home/CategoryDetails";
 import { TabsButton } from "@/app/components/molecules/TabsButton";
 import { Player } from "@lottiefiles/react-lottie-player";
-import { Category, TypeIdProps, History } from "@/app/types/type";
+import { TypeIdProps, History } from "@/app/types/type";
 import { jpMoneyChange } from "@/app/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<number | null>(null);
   const [records, setRecords] = useState<History[]>([]);
   const [totalMoney, setTotalMoney] = useState<number>(0);
+  const [selectedMonth, setSelectedMonth] = useState("");
 
   //現在の月取得
-  const today = new Date();
-  const formatted = today
-    .toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-    })
-    .split("/")
-    .join(".");
-  console.log(today);
-  console.log(formatted);
+  useEffect(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    setSelectedMonth(`${year}-${month}`);
+  }, []);
+
+  // 月を変更する関数
+  const changeMonth = (direction: "prev" | "next") => {
+    //"-"で分割、数値に変換（year = 2025, month = 10）
+    const [year, month] = selectedMonth.split("-").map(Number);
+    //new Dateの第二引数は０始まりの月
+    const date = new Date(year, month - 1 + (direction === "next" ? 1 : -1));
+    const newYear = date.getFullYear();
+    //０始まりの月を+１して元に戻し、yyyy-MMの形に
+    const newMonth = String(date.getMonth() + 1).padStart(2, "0");
+    setSelectedMonth(`${newYear}-${newMonth}`);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -33,7 +43,7 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // DBからデータ取得
+  // DBから支出・収入データ取得
   useEffect(() => {
     // ユーザーIDをセッションストレージから取得
     const id = sessionStorage.getItem("userId");
@@ -47,49 +57,48 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
       .then((data) => setRecords(data))
       .finally(() => setLoading(false));
   }, [userId]);
-  console.log(records);
 
   // recordsを配列に
   const allRecords = Object.values(records).flat();
 
-  //支出・収入の分類(履歴)
-  const newRecordData = allRecords.filter(
-    (r) => (r.typeId === 2) === (typeId === 2)
-  );
+  // 指定月・タイプ別データ
+  const filteredData = allRecords.filter((r) => {
+    const recordDate = new Date(r.date);
+    const year = recordDate.getFullYear();
+    const month = String(recordDate.getMonth() + 1).padStart(2, "0");
+    const recordMonth = `${year}-${month}`;
+    return recordMonth === selectedMonth && (r.typeId === 2) === (typeId === 2);
+  });
 
-  //当月の合計金額
+  // 月ごとの合計を計算
   useEffect(() => {
-    if (!newRecordData.length) {
+    if (!filteredData.length) {
       setTotalMoney(0);
       return;
     }
-
-    const thisMonth = today.getMonth();
-    const thisYear = today.getFullYear();
-
-    const totals = newRecordData.reduce((total, rec) => {
-      const recordDate = new Date(rec.date);
-      if (
-        recordDate.getFullYear() === thisYear &&
-        recordDate.getMonth() === thisMonth
-      ) {
-        return total + rec.money;
-      }
-      return total;
-    }, 0);
-    setTotalMoney(totals);
-  }, [newRecordData]);
+    const total = filteredData.reduce((sum, r) => sum + r.money, 0);
+    setTotalMoney(total);
+  }, [filteredData]);
 
   return (
     <div className="w-[350px]">
       <div className="flex justify-center mt-3 flex-col items-center gap-2">
-        <h1 className="text-maincolor text-xl font-bold font-mono ">
-          {formatted}
-        </h1>
+        <div className="flex flex-row items-center gap-3">
+          <button onClick={() => changeMonth("prev")}>
+            <ChevronLeft />
+          </button>
+          <h1 className="text-maincolor text-xl font-bold font-mono ">
+            {selectedMonth.replace("-", ".")}
+          </h1>
+          <button>
+            <ChevronRight onClick={() => changeMonth("next")} />
+          </button>
+        </div>
         <h1 className="text-2xl font-bold font-mono text-[#75A9F9]">
           {jpMoneyChange(totalMoney)}
         </h1>
       </div>
+
       {loading ? (
         <div>
           <Player
@@ -128,11 +137,11 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
                         <p>no data</p>
                       </div>
                     ) : (
-                      <HomePieChart typeId={1} />
+                      <HomePieChart typeId={1} selectedMonth={selectedMonth} />
                     )}
-                    <CategoryDetails typeId={1} />
+                    <CategoryDetails typeId={1} selectedMonth={selectedMonth} />
                   </TabsContent>
-                  
+
                   {/* 収入 */}
                   <TabsContent value="income">
                     {totalMoney === 0 ? (
@@ -140,9 +149,9 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
                         <p>no data</p>
                       </div>
                     ) : (
-                      <HomePieChart typeId={2} />
+                      <HomePieChart typeId={2} selectedMonth={selectedMonth} />
                     )}
-                    <CategoryDetails typeId={2} />
+                    <CategoryDetails typeId={2} selectedMonth={selectedMonth} />
                   </TabsContent>
                 </>
               )}
