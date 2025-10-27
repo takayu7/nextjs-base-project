@@ -1,28 +1,39 @@
 "use client";
 import { House, Pencil, List, Flag } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export const Tabbar = () => {
-    const router = useRouter();
+  const pathname = usePathname(); //現在のパスを取得
+  const router = useRouter();
+
+  const tabs = [
+    { path: "/home", icon: House, label: "Home" },
+    { path: "/record", icon: Pencil, label: "Record" },
+    { path: "/history", icon: List, label: "History" },
+    { path: "/goal", icon: Flag, label: "Goal" },
+  ];
+
   return (
     <>
       <div className="flex flex-row justify-between px-20 py-2 bg-pink-200">
-        <div className="flex flex-col items-center hover:bg-gray-50" onClick={() => router.push("/home")}>
-          <House />
-          <p className="text-[11px]">Home</p>
-        </div>
-        <div className="flex flex-col items-center" onClick={() => router.push("/record")}>
-          <Pencil />
-          <p className="text-[11px]">Record</p>
-        </div>
-        <div className="flex flex-col items-center"  onClick={() => router.push("/history")}>
-          <List />
-          <p className="text-[11px]">History</p>
-        </div>
-        <div className="flex flex-col items-center" onClick={() => router.push("/goal")}>
-          <Flag />
-          <p className="text-[11px]">Goal</p>
-        </div>
+        {tabs.map((t) => {
+          const nowPath = pathname === t.path;
+          const Icon = t.icon;
+          return (
+            <div
+              key={t.path}
+              onClick={() => router.push(t.path)}
+              className={cn(
+                "flex flex-col items-center",
+                nowPath ? "text-[#E93578] scale-110" : "text-gray-700"
+              )}
+            >
+              <Icon className="w-5 h-5" />
+              <p className="texy-[11px]">{t.label}</p>
+            </div>
+          );
+        })}
       </div>
     </>
   );

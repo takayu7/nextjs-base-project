@@ -120,3 +120,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.income{
+  color: #F6A2BF;
+  background-color: #F6A2BF;
+}
+
+

@@ -4,7 +4,7 @@ import React from "react";
 export default async function HomePage() {
   return (
     <div>
-      <HomeTabs />
+      <HomeTabs typeId={1}/>
     </div>
   );
 }
