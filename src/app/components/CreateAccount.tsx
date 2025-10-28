@@ -50,7 +50,7 @@ export const CreateAccount = () => {
     sessionStorage.setItem("name", loginData.name ?? "");
     sessionStorage.setItem("email", loginData.address ?? "");
     sessionStorage.setItem("birthday", String(loginData.birthday ?? ""));
-    sessionStorage.setItem("userId", loginData.userId ?? "");
+    sessionStorage.setItem("userId", String(loginData.userId ?? ""));
     window.dispatchEvent(new Event("headerUpdate"));
 
     // ホーム画面に遷移

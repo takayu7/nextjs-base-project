@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { CircleUserRound, Settings } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 export const IconSheet = () => {
   const router = useRouter();
@@ -35,24 +35,34 @@ export const IconSheet = () => {
   };
 
   // ユーザーIDをセッションストレージから取得
-  const updateHeaderInfo = useCallback(() => {
-    const storedId = sessionStorage.getItem("userId") || "0";
-    setUserId(Number(storedId));
-  }, []);
+  // const updateHeaderInfo = useCallback(() => {
+  //   const storedId = sessionStorage.getItem("userId");
+  //   if (storedId) {
+  //     setUserId(Number(storedId));
+  //   }
+  //   getUserInfo();
+  // }, []);
 
   console.log(userId);
   console.log(isLoading);
 
   //再ログイン時にuserIdの値を更新する
   useEffect(() => {
-    updateHeaderInfo();
+    const storedId = sessionStorage.getItem("userId");
+    if (storedId) {
+      setUserId(Number(storedId));
+    }
     getUserInfo();
     // カスタムイベント監視
-    const handler = () => getUserInfo();
-    window.addEventListener("headerUpdate", handler);
-    return () => {
-      window.removeEventListener("headerUpdate", handler);
+    const handler = () => {
+      const id = sessionStorage.getItem("userId");
+      if (id) setUserId(Number(id));
+      getUserInfo();
     };
+
+    window.addEventListener("headerUpdate", handler);
+
+    return () => window.removeEventListener("headerUpdate", handler);
   }, []);
 
   console.log("ログインユーザ:", userName, userEmail, userBirthday);
@@ -71,7 +81,7 @@ export const IconSheet = () => {
   // ナビゲーション処理
   const handleNavigation = (href: string) => {
     if (href !== pathname) {
-      sessionStorage.clear(); 
+      sessionStorage.clear();
       window.dispatchEvent(new Event("headerUpdate"));
       setIsLoading(true);
       setIsOpen(false);

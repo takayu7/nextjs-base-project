@@ -5,10 +5,8 @@ import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { InputField } from "@/app/components/molecules/InputField";
-// import { User } from "@/app/types/type";
 
 export default function SignIn() {
-  // const [users, setUsers] = useState<User[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +30,9 @@ export default function SignIn() {
       }
 
       const user = await res.json();
+      console.log("login response:", user);
 
-      sessionStorage.setItem("userId", user.id);
+      sessionStorage.setItem("userId", String(user.userId));
       sessionStorage.setItem("name", user.name ?? "");
       sessionStorage.setItem("email", user.address ?? "");
       sessionStorage.setItem("birthday", String(user.birthday ?? ""));

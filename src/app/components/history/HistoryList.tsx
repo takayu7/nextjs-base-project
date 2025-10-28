@@ -19,7 +19,7 @@ export const HistoryList: React.FC<TypeIdProps> = () => {
     if (id) {
       setUserId(Number(id));
     }
-    if (!userId || userId === 0) return;
+    if (!userId) return;
     setLoading(true);
     fetch(`/api/histories/${userId}`)
       .then((res) => res.json())
