@@ -1,8 +1,8 @@
 import { getRecordData } from "@/app/lib/api";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { userId: string } }
 ) {
   const { userId } = params;
