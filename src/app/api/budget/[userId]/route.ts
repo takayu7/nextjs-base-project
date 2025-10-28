@@ -3,9 +3,9 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  context: { params: Promise<{ userId: string }> }
 ) {
-  const { userId } = params;
+  const { userId } = await context.params;
   const data = await getBudgetData(userId);
   return NextResponse.json(data);
 }
