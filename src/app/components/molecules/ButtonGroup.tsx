@@ -10,16 +10,19 @@ type ButtonGroupProps = {
     | "expenseCategory"
     | "incomeCategory";
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: "button" | "submit";
 };
 
 export const ButtonGroup: React.FC<ButtonGroupProps> = ({
   label,
   varient = "expense",
   onClick,
+  type = "button",
 }) => {
   return (
     <>
       <button
+        type={type}
         className={
           varient === "expense"
             ? "btn rounded-[3px] bg-[#A8C6FA] text-white btn-xl btn-wide shadow-lg text-lg hover:bg-[#75A9F9] w-[165px] h-[45px]"

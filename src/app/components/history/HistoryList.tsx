@@ -27,6 +27,7 @@ export const HistoryList: React.FC<TypeIdProps> = () => {
       .finally(() => setLoading(false));
   }, [userId]);
 
+  console.log(userId);
   console.log(records);
 
   return (

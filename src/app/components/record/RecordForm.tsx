@@ -101,6 +101,7 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
                       label="Save"
                       varient="expense"
                       onClick={handleSubmit(onSubmit)}
+                      type="submit"
                     />
                   )}
                   {isSaved && (
@@ -122,6 +123,7 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
                       label="Save"
                       varient="income"
                       onClick={handleSubmit(onSubmit)}
+                      type="submit"
                     />
                   )}
                   {isSaved && (

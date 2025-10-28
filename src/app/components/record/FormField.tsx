@@ -8,19 +8,12 @@ type FormFieldProps = {
   typeId: Type["id"];
   register: UseFormRegister<AppRecord>;
   errors: FieldErrors;
-  defaultValues?: {
-    money?: number;
-    categoryId?: number;
-    date?: string;
-    memo?: string;
-  };
 };
 
 export const FormField: React.FC<FormFieldProps> = ({
   typeId,
   register,
   errors,
-  defaultValues,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -39,7 +32,6 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   const filteredCategories = categories.filter((c) => c.typeId === typeId);
 
-  console.log(defaultValues?.date);
   return (
     <ul className="space-y-8 pt-8 w-full">
       {/* 金額 */}
@@ -51,7 +43,6 @@ export const FormField: React.FC<FormFieldProps> = ({
         <div className="flex flex-col">
           <input
             type="number"
-            defaultValue={defaultValues?.money}
             {...register("money", {
               required: "Please enter money.",
               min: { value: 1, message: "Please enter 1 yen or more." },
@@ -75,11 +66,10 @@ export const FormField: React.FC<FormFieldProps> = ({
         <label className="font-semibold">Category</label>
         <div className="flex flex-col">
           <select
-            value={String(defaultValues?.categoryId ?? "0")}
             {...register("categoryId", {
               required: "Please select a category.",
               setValueAs: (v) => Number(v),
-              validate: (v) => Number(v) !== 0 || "Please select a category.", // vはstring
+              validate: (v) => Number(v) !== 0 || "Please select a category.",
             })}
             className={
               typeId === 1
@@ -109,7 +99,6 @@ export const FormField: React.FC<FormFieldProps> = ({
         <div className="flex flex-col">
           <input
             type="date"
-            value={defaultValues?.date}
             {...register("date", { required: "Please enter a date." })}
             className={
               typeId === 1
@@ -130,7 +119,6 @@ export const FormField: React.FC<FormFieldProps> = ({
         <label className="font-semibold">Memo</label>
         <div className="flex flex-col">
           <textarea
-            defaultValue={defaultValues?.memo ?? ""}
             {...register("memo", {
               maxLength: {
                 value: 50,

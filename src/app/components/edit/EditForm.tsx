@@ -89,14 +89,14 @@ export const EditForm = () => {
             typeId={selectedHistory.typeId}
             register={register}
             errors={errors}
-            defaultValues={{
-              money: selectedHistory.money,
-              categoryId: Number(selectedHistory.categoryId),
-              date: new Date(selectedHistory.date)
-                .toLocaleDateString("sv-SE")
-                .replace(/\//g, "-"),
-              memo: selectedHistory.memo,
-            }}
+            // defaultValues={{
+            //   money: selectedHistory.money,
+            //   categoryId: Number(selectedHistory.categoryId),
+            //   date: new Date(selectedHistory.date)
+            //     .toLocaleDateString("sv-SE")
+            //     .replace(/\//g, "-"),
+            //   memo: selectedHistory.memo,
+            // }}
           />
 
           <div className="flex items-center justify-center pt-25 flex-row">
@@ -108,6 +108,7 @@ export const EditForm = () => {
                 </div>
               }
               varient={selectedHistory.typeId === 1 ? "expense" : "income"}
+              type="submit"
             />
           </div>
         </form>

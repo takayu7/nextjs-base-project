@@ -36,7 +36,7 @@ export async function addUserDatas(user: User) {
     VALUES (${user.name}, ${user.password}, ${user.address}, ${user.birthday})
     RETURNING *;
     `;
-    return data;
+    return data[0];
   } catch (error) {
     console.error("Database error:", error);
     throw new Error("Failed to create user.");
