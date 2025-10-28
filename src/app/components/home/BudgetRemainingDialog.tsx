@@ -67,7 +67,7 @@ export const BudgetRemainingDialog: React.FC<TypeIdProps> = ({ typeId }) => {
     }
   };
 
-   //記録が追加・更新されたら再取得する
+  //記録が追加・更新されたら再取得する
   useEffect(() => {
     if (!userId) return;
     fetchData(userId);
@@ -115,9 +115,10 @@ export const BudgetRemainingDialog: React.FC<TypeIdProps> = ({ typeId }) => {
     setTotalMoney(totals);
   }, [newRecordData]);
 
-  //remaining
-  const remaining = Number(monthlyBudget?.money) - totalMoney;
+  //remain(残高)
+  const remaining = Number(monthlyBudget?.money) - totalMoney || 0;
   const isOver = remaining <= 0;
+  console.log(remaining);
 
   //豚の色
   const persent = (totalMoney / Number(monthlyBudget?.money)) * 100;
@@ -141,7 +142,9 @@ export const BudgetRemainingDialog: React.FC<TypeIdProps> = ({ typeId }) => {
       </DialogTrigger>
       <DialogContent className="w-[348px] bg-gray-100">
         <DialogTitle className="flex justify-center items-center">
-          <p className="text-maincolor text-xl text-[#E93578]">{nowDate.replace("-", ".")}</p>
+          <p className="text-maincolor text-xl text-[#E93578]">
+            {nowDate.replace("-", ".")}
+          </p>
         </DialogTitle>
         {loading ? (
           <div>
@@ -154,6 +157,15 @@ export const BudgetRemainingDialog: React.FC<TypeIdProps> = ({ typeId }) => {
                 width: "100px",
               }}
             />
+          </div>
+        ) : !monthlyBudget ? (
+          //予算が設定されていないとき
+          <div className="flex flex-col justify-center items-center gap-3 text-gray-600">
+            <TriangleAlert className="w-6 h-6 text-red-500" />
+            <p>No budget has been set for this month.</p>
+            <p className="text-sm text-gray-400">
+              Please set your budget first.
+            </p>
           </div>
         ) : (
           <>

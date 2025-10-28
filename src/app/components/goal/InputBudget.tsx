@@ -24,7 +24,7 @@ export const InputBudget = () => {
   } = useForm<Budget>({ mode: "onChange" });
 
   const [yearMonth, setYearMonth] = useState("");
-  const [budgetMoney, setBudgetMoney] = useState(0);
+  const [budgetMoney, setBudgetMoney] = useState<string>("");
   const [budgetData, setBudgetData] = useState<{
     money: number;
     yearMonth: string;
@@ -92,12 +92,14 @@ export const InputBudget = () => {
     const budgetInfo: Budget = {
       userId,
       yearMonth: yearMonth || formatted,
-      money: budgetMoney,
+      money: Number(budgetMoney),
     };
     startTransition(() => {
       onSave(budgetInfo);
     });
   };
+
+  console.log(isPending);
 
   return (
     <div className="w-[350px]">
@@ -141,7 +143,7 @@ export const InputBudget = () => {
                     onClick={() => {
                       setIsEditing(true);
                       setYearMonth(budgetData.yearMonth);
-                      setBudgetMoney(budgetData.money);
+                      setBudgetMoney(String(budgetData.money));
                     }}
                   />
                 </div>
@@ -152,8 +154,11 @@ export const InputBudget = () => {
                 {/* 月選択 */}
                 <input
                   type="month"
-                  name="year_month"
                   value={yearMonth || formatted}
+                  min={formatted}
+                  {...register("yearMonth", {
+                    required: "Date of year and month is required.",
+                  })}
                   onChange={(e) => setYearMonth(e.target.value)}
                   className="select rounded-[3px] border-1 border-[#F06E9C] px-2 py-1 w-[180px] h-[32px]"
                 />
@@ -166,20 +171,21 @@ export const InputBudget = () => {
                   isError={!!errors.money}
                   value={budgetMoney}
                   {...register("money", {
-                    required: "予算額は必須です。",
+                    required: "Budget amount is required.",
                     min: {
                       value: 1,
-                      message: "1円以上を入力してください。",
+                      message: "Please enter 1 yen or more.",
                     },
                     max: {
                       value: 100000000,
-                      message: "1億円以下で入力してください。",
+                      message:
+                        "Please enter an amount no more than 100,000,000 yen.",
                     },
                     validate: (value) =>
-                      !isNaN(value) || "数値を入力してください。",
+                      !isNaN(value) || "Please enter a numeric value.",
                   })}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setBudgetMoney(Number(e.target.value))
+                    setBudgetMoney(e.target.value)
                   }
                 />
                 {errors.money && (
@@ -191,9 +197,9 @@ export const InputBudget = () => {
                 <Dialog>
                   <BudgetDialog
                     yearMonth={yearMonth || formatted}
-                    budgetMoney={budgetMoney}
+                    budgetMoney={Number(budgetMoney)}
                     onSave={handleSubmit(onSubmit)}
-                    disabled={!isValid || budgetMoney <= 0}
+                    disabled={!isValid || Number(budgetMoney) <= 0}
                   />
                 </Dialog>
               </>

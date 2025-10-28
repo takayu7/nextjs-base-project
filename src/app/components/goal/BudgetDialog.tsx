@@ -23,11 +23,12 @@ export const BudgetDialog = ({
     <>
       <DialogTrigger
         disabled={disabled}
-        className={`btn rounded-[3px] bg-[#F6A2BF] text-white btn-xl btn-wide shadow-lg text-lg hover:bg-[#F06E9C] w-[165px] h-[47px] ${
-          disabled
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-[#F6A2BF] hover:bg-[#F06E9C]"
-        }`}
+        className={`btn rounded-[3px] text-white btn-xl btn-wide shadow-lg text-lg w-[165px] h-[47px]
+    ${
+      disabled
+        ? "bg-gray-300 cursor-not-allowed"
+        : "bg-[#F6A2BF] hover:bg-[#F06E9C]"
+    }`}
       >
         Save
       </DialogTrigger>
