@@ -9,7 +9,7 @@ type ButtonGroupProps = {
     | "delete"
     | "expenseCategory"
     | "incomeCategory";
-  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export const ButtonGroup: React.FC<ButtonGroupProps> = ({

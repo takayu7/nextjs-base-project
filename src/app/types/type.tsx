@@ -29,7 +29,7 @@ export type History = {
   userId: number;
   categoryId: number;
   money: number;
-  date: Date;
+  date: Date | string;
   memo: string;
   categoryName: string;
   categoryColor: string;
@@ -42,7 +42,7 @@ export type AppRecord = {
   userId: number;
   categoryId: number;
   money: number;
-  date: Date;
+  date: Date | string;
   memo: string;
 };
 

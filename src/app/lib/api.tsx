@@ -91,18 +91,29 @@ export async function getRecordData(userId: string) {
     LEFT JOIN categories c ON r.category_id = c.id
     WHERE r.user_id = ${Number(userId)}
     ORDER BY r.date DESC`;
-    const formatted = data.map((i) => ({
-      id: i.id,
-      typeId: i.type_id,
-      userId: i.user_id,
-      categoryId: i.category_id,
-      money: i.money,
-       date: new Date(i.date).toISOString().split("T")[0].replace(/-/g, "."),
-      memo: i.memo,
-      categoryName: i.category_name,
-      categoryColor: i.category_color,
-      categoryIcon: i.category_icon,
-    }));
+    const formatted = data.map((i) => {
+      const dateObj = new Date(i.date);
+
+      // 日本時間に調整
+      const jstOffset = 9 * 60;
+      const jstDate = new Date(dateObj.getTime() + jstOffset * 60 * 1000);
+
+      return {
+        id: i.id,
+        typeId: i.type_id,
+        userId: i.user_id,
+        categoryId: i.category_id,
+        money: i.money,
+        date: `${jstDate.getFullYear()}.${(jstDate.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}.${jstDate.getDate().toString().padStart(2, "0")}`,
+        memo: i.memo,
+        categoryName: i.category_name,
+        categoryColor: i.category_color,
+        categoryIcon: i.category_icon,
+      };
+    });
+    console.log(data);
     console.log("getRecordData formatted:", formatted);
 
     //日付ごとにグループ化
@@ -148,8 +159,8 @@ export async function addRecorData(record: AppRecord) {
 
 //支出・収入の更新
 export async function updateRecorData(record: AppRecord) {
-  try{
-    const data=await sql`
+  try {
+    const data = await sql`
     UPDATE records
     SET
       category_id = ${record.categoryId},
@@ -161,7 +172,7 @@ export async function updateRecorData(record: AppRecord) {
     RETURNING *;
     `;
     return data;
-  }catch(error){
+  } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update record.");
   }
@@ -189,7 +200,7 @@ export async function getBudgetData(userId: string) {
 }
 
 //予算データの取得（現在の月の予算データのみ）
-export async function getBudgetDataByMonth(targetDate: string, userId:number) {
+export async function getBudgetDataByMonth(targetDate: string, userId: number) {
   try {
     const data = await sql`
     SELECT * 
@@ -209,7 +220,6 @@ export async function getBudgetDataByMonth(targetDate: string, userId:number) {
     throw new Error("Failed to fetch budget data.");
   }
 }
-
 
 //予算データの登録
 export async function addBudgetDatas(budget: Budget) {
@@ -234,9 +244,9 @@ export async function addBudgetDatas(budget: Budget) {
 }
 
 //予算データの更新
-export async function updateBudgetDatas(budget:Budget) {
-  try{
-    const data=await sql`
+export async function updateBudgetDatas(budget: Budget) {
+  try {
+    const data = await sql`
     UPDATE budget
     SET
       money= ${budget.money}
@@ -247,7 +257,7 @@ export async function updateBudgetDatas(budget:Budget) {
     RETURNING *;
     `;
     return data;
-  }catch(error){
+  } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to update budget.");
   }

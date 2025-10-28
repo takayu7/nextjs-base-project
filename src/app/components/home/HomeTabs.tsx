@@ -13,7 +13,8 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<number | null>(null);
   const [records, setRecords] = useState<History[]>([]);
-  const [totalMoney, setTotalMoney] = useState<number>(0);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [totalIncome, setTotalIncome] = useState<number>(0);
   const [selectedMonth, setSelectedMonth] = useState("");
 
   //現在の月取得
@@ -62,7 +63,7 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
   const allRecords = Object.values(records).flat();
 
   // 指定月・タイプ別データ
-  const filteredData = allRecords.filter((r) => {
+  const monthlyData = allRecords.filter((r) => {
     const recordDate = new Date(r.date);
     const year = recordDate.getFullYear();
     const month = String(recordDate.getMonth() + 1).padStart(2, "0");
@@ -72,13 +73,16 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
 
   // 月ごとの合計を計算
   useEffect(() => {
-    if (!filteredData.length) {
-      setTotalMoney(0);
-      return;
-    }
-    const total = filteredData.reduce((sum, r) => sum + r.money, 0);
-    setTotalMoney(total);
-  }, [filteredData]);
+    const expense = monthlyData
+      .filter((r) => r.typeId === 1)
+      .reduce((sum, r) => sum + r.money, 0);
+    const income = monthlyData
+      .filter((r) => r.typeId === 2)
+      .reduce((sum, r) => sum + r.money, 0);
+
+    setTotalExpense(expense);
+    setTotalIncome(income);
+  }, [monthlyData]);
 
   return (
     <div className="w-[350px]">
@@ -95,7 +99,7 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
           </button>
         </div>
         <h1 className="text-2xl font-bold font-mono text-[#75A9F9]">
-          {jpMoneyChange(totalMoney)}
+          {jpMoneyChange(totalExpense)}
         </h1>
       </div>
 
@@ -132,7 +136,7 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
                 <>
                   {/* 支出 */}
                   <TabsContent value="expense">
-                    {totalMoney === 0 ? (
+                    {totalExpense === 0 ? (
                       <div className="flex items-center justify-center p-20">
                         <p>no data</p>
                       </div>
@@ -144,7 +148,7 @@ export const HomeTabs: React.FC<TypeIdProps> = ({ typeId }) => {
 
                   {/* 収入 */}
                   <TabsContent value="income">
-                    {totalMoney === 0 ? (
+                    {totalIncome === 0 ? (
                       <div className="flex items-center justify-center p-20">
                         <p>no data</p>
                       </div>
