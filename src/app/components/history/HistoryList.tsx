@@ -51,7 +51,7 @@ export const HistoryList: React.FC<TypeIdProps> = () => {
             <div key={date} className="flex flex-col gap-1.5">
               {/* 日付 */}
               <h2 className="font-semibold text-gray-900 text-lg px-1">
-                {date}
+               {date}
               </h2>
 
               {/* 履歴リスト */}

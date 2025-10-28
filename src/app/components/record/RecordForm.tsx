@@ -41,7 +41,7 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
     });
     const data = await res.text();
     console.log("Response:", data);
-     window.dispatchEvent(new Event("recordUpdated"));
+    window.dispatchEvent(new Event("recordUpdated"));
   };
 
   const onSubmit = (data: AppRecord) => {
@@ -74,6 +74,8 @@ export const RecordForm: React.FC<TypeIdProps> = () => {
     })
     .split("/")
     .join(".");
+
+  console.log(isPending);
 
   return (
     <div className="w-[350px]">

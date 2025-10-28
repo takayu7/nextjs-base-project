@@ -23,18 +23,26 @@ export const EditForm = () => {
     const data = sessionStorage.getItem("selectedHistory");
     if (!data) return;
 
-    const parsed = JSON.parse(data);
-    const formattedDate = parsed.date.replace(/\./g, "-");
-    setSelectedHistory(parsed);
+    const recordData: History = JSON.parse(data);
 
-    //フォームの値をリセット
+    // 更新した日付を反映した履歴をセット
+    setSelectedHistory(recordData);
+    console.log(recordData);
+
+    const localDate = new Date(recordData.date);
+    localDate.setMinutes(
+      localDate.getMinutes() - localDate.getTimezoneOffset()
+    );
+
+    // フォームにセット
     reset({
-      money: parsed.money,
-      categoryId: parsed.categoryId,
-      date: formattedDate,
-      memo: parsed.memo ?? "",
+      money: recordData.money,
+      categoryId: Number(recordData.categoryId),
+      date: localDate.toISOString().split("T")[0],
+      memo: recordData.memo ?? "",
     });
   }, [reset]);
+
   console.log(selectedHistory);
 
   if (!selectedHistory) return <div>Loading...</div>;
@@ -84,7 +92,9 @@ export const EditForm = () => {
             defaultValues={{
               money: selectedHistory.money,
               categoryId: Number(selectedHistory.categoryId),
-              date: new Date(selectedHistory.date).toISOString().split("T")[0],
+              date: new Date(selectedHistory.date)
+                .toLocaleDateString("sv-SE")
+                .replace(/\//g, "-"),
               memo: selectedHistory.memo,
             }}
           />

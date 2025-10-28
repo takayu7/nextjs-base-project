@@ -39,6 +39,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   const filteredCategories = categories.filter((c) => c.typeId === typeId);
 
+  console.log(defaultValues?.date);
   return (
     <ul className="space-y-8 pt-8 w-full">
       {/* 金額 */}
@@ -74,7 +75,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         <label className="font-semibold">Category</label>
         <div className="flex flex-col">
           <select
-            defaultValue={String(defaultValues?.categoryId ?? "0")}
+            value={String(defaultValues?.categoryId ?? "0")}
             {...register("categoryId", {
               required: "Please select a category.",
               setValueAs: (v) => Number(v),
@@ -108,7 +109,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         <div className="flex flex-col">
           <input
             type="date"
-            defaultValue={defaultValues?.date}
+            value={defaultValues?.date}
             {...register("date", { required: "Please enter a date." })}
             className={
               typeId === 1
