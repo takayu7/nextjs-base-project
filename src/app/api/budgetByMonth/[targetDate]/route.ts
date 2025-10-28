@@ -3,10 +3,10 @@ import { getBudgetDataByMonth } from "@/app/lib/api";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ targetDate: string }> }
+  context: { params: Promise<{ targetDate: string }> }
 ) {
   try {
-    const { targetDate } = await params;
+    const { targetDate } = await context.params;
     const { searchParams } = new URL(req.url);
     const userId = Number(searchParams.get("userId"));
 
