@@ -81,6 +81,7 @@ export const InputBudget = () => {
 
     const data = await res.json();
     console.log("Response:", data);
+    window.dispatchEvent(new Event("recordUpdated"));
 
     //送信後に最新データを再取得
     await fetchBudget();
