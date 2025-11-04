@@ -47,11 +47,13 @@ export const CreateAccount = () => {
     const loginData = await login.json();
 
     // セッション保存
-    sessionStorage.setItem("name", loginData.name ?? "");
-    sessionStorage.setItem("email", loginData.address ?? "");
-    sessionStorage.setItem("birthday", String(loginData.birthday ?? ""));
-    sessionStorage.setItem("userId", String(loginData.userId ?? ""));
-    window.dispatchEvent(new Event("headerUpdate"));
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("name", loginData.name ?? "");
+      sessionStorage.setItem("email", loginData.address ?? "");
+      sessionStorage.setItem("birthday", String(loginData.birthday ?? ""));
+      sessionStorage.setItem("userId", String(loginData.userId ?? ""));
+      window.dispatchEvent(new Event("headerUpdate"));
+    }
 
     // ホーム画面に遷移
     setTimeout(() => {

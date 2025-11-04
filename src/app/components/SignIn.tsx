@@ -1,6 +1,6 @@
 "use client";
 
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { PiPiggyBankDuotone } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -32,12 +32,14 @@ export default function SignIn() {
       const user = await res.json();
       console.log("login response:", user);
 
-      sessionStorage.setItem("userId", String(user.userId));
-      sessionStorage.setItem("name", user.name ?? "");
-      sessionStorage.setItem("email", user.address ?? "");
-      sessionStorage.setItem("birthday", String(user.birthday ?? ""));
-
-      window.dispatchEvent(new Event("headerUpdate"));
+      // セッション保存
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("userId", String(user.userId));
+        sessionStorage.setItem("name", user.name ?? "");
+        sessionStorage.setItem("email", user.address ?? "");
+        sessionStorage.setItem("birthday", String(user.birthday ?? ""));
+        window.dispatchEvent(new Event("headerUpdate"));
+      }
 
       router.push("/home");
     } catch (error) {
@@ -60,7 +62,7 @@ export default function SignIn() {
         </div>
         <div className="relative  w-[173px] rounded-lg bg-gray-400 p-4 text-white  text-center m-5">
           please enter your Email and Password.
-           <div className="absolute z-10 left-[12px]">
+          <div className="absolute z-10 left-[12px]">
             <div className="rounded-sm before:absolute before:-top-5 before:-left-5 before:h-4 before:w-4 before:-rotate-45 before:transform before:bg-gray-400" />
           </div>
         </div>
