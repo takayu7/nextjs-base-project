@@ -1,7 +1,8 @@
+"use client";
 import { EditForm } from "@/app/components/edit/EditForm";
 import React from "react";
 
-export default async function EditPage() {
+export default function EditPage() {
   return (
     <div>
       <EditForm />

@@ -1,7 +1,8 @@
+"use client";
 import { InputBudget } from "@/app/components/goal/InputBudget";
 import React from "react";
 
-export default async function HistoryPage() {
+export default function HistoryPage() {
   return (
     <div>
       <InputBudget />
